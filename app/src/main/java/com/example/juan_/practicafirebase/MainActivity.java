@@ -13,9 +13,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.client.Firebase;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.*;
+import com.google.firebase.database.*;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity{
 
@@ -27,6 +32,8 @@ private Button   buttonLogin;*/
 
 
 private FirebaseAuth firebaseAuth;
+private DatabaseReference firebase;
+
 
 
     @Override
@@ -36,13 +43,18 @@ private FirebaseAuth firebaseAuth;
 
         firebaseAuth = FirebaseAuth.getInstance();
 
-        if(firebaseAuth.getCurrentUser() != null){
+  /*      if(firebaseAuth.getCurrentUser() != null){
             finish();
             startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
         }else{
             finish();
             startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-        }
+        }*/
+
+         firebase = FirebaseDatabase.getInstance().getReference();
+
+
+
 
 
 
@@ -57,6 +69,23 @@ private FirebaseAuth firebaseAuth;
        buttonLogin.setOnClickListener(this);*/
 
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // Check auth on Activity start
+        if (firebaseAuth.getCurrentUser() != null) {
+            finish();
+            startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+        }else{
+            finish();
+            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+        }
+    }
+
+
+
 
 /*    private void registerUser(){
 
