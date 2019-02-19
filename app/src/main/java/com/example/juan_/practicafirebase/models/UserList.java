@@ -9,6 +9,10 @@ public class UserList {
 
     private HashMap<String, User> users;
 
+    public UserList(){
+        this.users = new HashMap<>();
+    }
+
     public UserList(User u) {
         this.users = new HashMap<>();
         users.put(u.getEmail(),u);
@@ -22,8 +26,8 @@ public class UserList {
         users.put(u.getEmail(),u);
     }
 
-    public void addGroup (String key, User g){
-        users.put(key,g);
+    public void addUser (String key, User u){
+        users.put(key,u);
     }
 
     public void remove (String key){
