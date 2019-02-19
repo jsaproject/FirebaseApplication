@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "578391543469",
+    "firebase_url": "https://fir-application-59767.firebaseio.com",
+    "project_id": "fir-application-59767",
+    "storage_bucket": "fir-application-59767.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:578391543469:android:0a48003719dc0b8c",
+        "android_client_info": {
+          "package_name": "com.example.juan_.practicafirebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "578391543469-n2jv583cl22okr0b94ll9dd2714dr1ak.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.juan_.practicafirebase",
+            "certificate_hash": "e7c094e2ff29e32929f7db85fddec998131c0d0d"
+          }
+        },
+        {
+          "client_id": "578391543469-cqop3ji384t9hkl98dko3v4cm7ratp1e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.juan_.practicafirebase",
+            "certificate_hash": "9ac1af4eee1d08c1e05462022745f13fc132fe5f"
+          }
+        },
+        {
+          "client_id": "578391543469-31f75qee6dlk6up4igm917ilcis2sps4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALt268CznW5xZZuNi_edpKeBiTpbhyz14"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "578391543469-31f75qee6dlk6up4igm917ilcis2sps4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
