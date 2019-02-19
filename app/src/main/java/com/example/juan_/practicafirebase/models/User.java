@@ -3,25 +3,28 @@ package com.example.juan_.practicafirebase.models;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.util.HashMap;
+import java.util.List;
+
 
 public class User {
 
     private String email;
-    private String password;
     private String nombre;
     private String apellidos;
     private int telefono;
+    private ListGroups groups;
 
     public User(){
 
     }
 
-    public User(String email, String password, String nombre, String apellidos, int telefono) {
+    public User(String email, String nombre, String apellidos, int telefono, ListGroups ls) {
         this.email = email;
-        this.password = password;
         this.nombre = nombre;
         this.apellidos = apellidos;
         this.telefono = telefono;
+        this.groups = ls;
     }
 
     public String getEmail() {
@@ -30,14 +33,6 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getNombre() {
@@ -62,5 +57,14 @@ public class User {
 
     public void setTelefono(int telefono) {
         this.telefono = telefono;
+    }
+
+
+    public ListGroups getGroups() {
+        return groups;
+    }
+
+    public void setGroups(ListGroups groups) {
+        this.groups = groups;
     }
 }

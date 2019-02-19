@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.juan_.practicafirebase.models.ListGroups;
 import com.example.juan_.practicafirebase.models.User;
 import com.example.juan_.practicafirebase.models.UserList;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -152,7 +153,8 @@ public class LoginActivity extends AppCompatActivity implements  View.OnClickLis
     }
 
     private void writeNewUser(String userId, String name, String email) {
-        User user = new User(email, null, name, null, 0);
+        ListGroups ls = new ListGroups();
+        User user = new User(email, name, null, 0, ls);
 /*        User user2 = new User("k", null, name, null, 0);
         User user3 = new User("j", null, name, null, 0);
         final UserList userList = new UserList(user);

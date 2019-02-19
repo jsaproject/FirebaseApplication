@@ -5,6 +5,10 @@ public class Message {
     private String mensaje;
     private User autor;
 
+    public Message(){
+
+    }
+
     public Message(String mensaje, User autor) {
         this.mensaje = mensaje;
         this.autor = autor;

@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class Groups {
+public class Group {
 
     private String nombreGrupo;
     private UserList usuarios;
     private MessageList listaMensajes;
 
-    public Groups(String nombreGrupo, UserList u) {
+    public Group(String nombreGrupo, UserList u) {
         this.nombreGrupo = nombreGrupo;
         this.usuarios = u;
         this.listaMensajes = new MessageList();
