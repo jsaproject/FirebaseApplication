@@ -1,10 +1,13 @@
 package com.example.juan_.practicafirebase.models;
 
+import com.google.firebase.database.IgnoreExtraProperties;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+@IgnoreExtraProperties
 public class UserList {
 
     private HashMap<String, User> users;

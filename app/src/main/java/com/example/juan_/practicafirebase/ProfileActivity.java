@@ -10,19 +10,24 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.juan_.practicafirebase.models.Group;
 import com.example.juan_.practicafirebase.models.ListGroups;
 import com.example.juan_.practicafirebase.models.User;
+import com.example.juan_.practicafirebase.models.UserList;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -54,9 +59,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private Button buttonLogout;
     private ListView ListaUsuarios;
     private FirebaseAuth firebaseAuth;
+    private EditText groupName;
     private FirebaseFirestore db;
-
-
+    private User user;
+    private Boolean groupExists;
+    private Dialog a;
+    private Boolean decision;
+    private ListView listAvailable;
 
 
 
@@ -71,114 +80,166 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         firebaseAuth = FirebaseAuth.getInstance();
 
         textViewUserEmail =(TextView) findViewById(R.id.textViewUserEmail);
-        buttonLogout = (Button) findViewById(R.id.buttonLogout);
+//        buttonLogout = (Button) findViewById(R.id.buttonLogout);
         ListaUsuarios = (ListView) findViewById(R.id.ListaUsuarios);
-
+        groupName = (EditText) findViewById(R.id.groupname);
+        listAvailable = (ListView) findViewById(R.id.listviewavailable);
         db = FirebaseFirestore.getInstance();
 
-
+        initialiceUser();
 
         numeroGruposUsuario();
+        numeroGruposUsuario2();
 
 
 
 
 
         //textViewUserEmail.setText(firebaseAuth.getCurrentUser().getEmail());
-        buttonLogout.setOnClickListener(this);
+/*        buttonLogout.setOnClickListener(this);*/
     }
 
 
     @Override
     public void onClick(View view) {
-        if (view == buttonLogout){
-            logout();
-        }
+
     }
 
     private void logout() {
         finish();
         firebaseAuth.signOut();
+        firebaseAuth = null;
+        db = null;
+
+
         startActivity(new Intent(getApplicationContext(), LoginActivity.class));
     }
 
 
     private void numeroGruposUsuario() {
 
-        String email = firebaseAuth.getCurrentUser().getEmail();
-        db.collection("users").document(email).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        final String email = firebaseAuth.getCurrentUser().getEmail();
+        db.collection("Listagrupos").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                List<String> nombregrupos = new ArrayList<>();
-                User user = null;
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                final List<String> nombregrupos = new ArrayList<>();
+
                 ArrayAdapter<String> arrayAdapter;
+                HashMap<String,Object> a = new HashMap<>();
                 if(task.isSuccessful()){
-                    DocumentSnapshot result = task.getResult();
-                    user = result.toObject(User.class);
-                }
-                if (user!=null) {
-                    ListGroups groups = user.getGroups();
-                    Collection<Group> groups1 = groups.allValue();
-                    Iterator<Group> iterator = groups1.iterator();
-                    while(iterator.hasNext()){
-                        Group next = iterator.next();
-                        nombregrupos.add(next.getNombreGrupo());
-                    }
-                }
-                textViewUserEmail.setText("prueba");
-                arrayAdapter = new ArrayAdapter<String>
-                        (getApplicationContext(), android.R.layout.simple_list_item_1, nombregrupos);
-                ListaUsuarios.setAdapter(arrayAdapter);
-            }
-        });
-
-    }
-
-    private User returnUser() {
-        User a = new User();
-        String email = firebaseAuth.getCurrentUser().getEmail();
-        db.collection("users").document(email).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                User u = new User();
-                    if (task.isSuccessful()){
-                        DocumentSnapshot result = task.getResult();
-                        u = result.toObject(User.class);
-                    }
-            }
-        });
-        return a;
-    }
-/*    private void numeroUsuariosGrupo() {
-
-        db.collection("users").get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        List<String> listItems = new ArrayList<>();
-                        ArrayAdapter<String> arrayAdapter;
-
-                        if (task.isSuccessful()) {
-
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                   User user = document.toObject(User.class);
-                                   listItems.add(user.getEmail());
+                    for (QueryDocumentSnapshot document : task.getResult()){
+                        String id = document.getId();
+                        Map<String,Object> map = (HashMap<String,Object>)document.getData().get("usuarios");
+                        for (Map.Entry<String, Object> entry : map.entrySet()) {
+                            if (entry.getKey().equals("users")) {
+                                a= (HashMap<String,Object>)entry.getValue();
                             }
                         }
-
-
-                            textViewUserEmail.setText("prueba");
-
-
-                         arrayAdapter = new ArrayAdapter<String>
-                                    (getApplicationContext(), android.R.layout.simple_list_item_1, listItems);
-
-
-                            ListaUsuarios.setAdapter(arrayAdapter);
+                        Set<String> strings = a.keySet();
+                        Iterator<String> iterator = strings.iterator();
+                        boolean not_encontrado = false;
+                        while(iterator.hasNext() && !not_encontrado){
+                            String next = iterator.next();
+                            if(next.equalsIgnoreCase(email)){
+                                not_encontrado = true;
+                            }
                         }
-                    });
+                        if(not_encontrado){
+                            nombregrupos.add(document.getId());
+                        }
 
-    }*/
+
+                    }
+
+                }
+
+
+                arrayAdapter = new ArrayAdapter<String>
+                        (getApplicationContext(), android.R.layout.simple_list_item_1, nombregrupos);
+                arrayAdapter.notifyDataSetChanged();
+                ListaUsuarios.setAdapter(arrayAdapter);
+                ListaUsuarios.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        String s = nombregrupos.get(position);
+
+                    }
+                });
+
+            }
+        });
+
+    }
+
+
+   private void numeroGruposUsuario2() {
+
+        final String email = firebaseAuth.getCurrentUser().getEmail();
+        db.collection("Listagrupos").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                List<String> nombregrupos = new ArrayList<>();
+
+                ArrayAdapter<String> arrayAdapter2;
+                HashMap<String,Object> a = new HashMap<>();
+                if(task.isSuccessful()){
+                    for (QueryDocumentSnapshot document : task.getResult()){
+                        String id = document.getId();
+                        Map<String,Object> map = (HashMap<String,Object>)document.getData().get("usuarios");
+                        for (Map.Entry<String, Object> entry : map.entrySet()) {
+                            if (entry.getKey().equals("users")) {
+                                a= (HashMap<String,Object>)entry.getValue();
+                            }
+                        }
+                        Set<String> strings = a.keySet();
+                        Iterator<String> iterator = strings.iterator();
+                        boolean not_encontrado = false;
+                        while(iterator.hasNext() && !not_encontrado){
+                            String next = iterator.next();
+                            if(next.equalsIgnoreCase(email)){
+                                not_encontrado = true;
+                            }
+                        }
+                        if(!not_encontrado){
+                            nombregrupos.add(document.getId());
+                        }
+
+
+                    }
+
+                }
+
+
+                arrayAdapter2 = new ArrayAdapter<String>
+                        (getApplicationContext(), android.R.layout.simple_list_item_1, nombregrupos);
+                arrayAdapter2.notifyDataSetChanged();
+                listAvailable.setAdapter(arrayAdapter2);
+            }
+        });
+
+    }
+
+    private void initialiceUser() {
+        final String email = firebaseAuth.getCurrentUser().getEmail();
+        db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    for (QueryDocumentSnapshot document : task.getResult()){
+                        String id = document.getId();
+                        if (id.equalsIgnoreCase(email)){
+                            user = document.toObject(User.class);
+                        }
+                    }
+                }
+                textViewUserEmail.setText("Bienvenido a la sesion " + user.getNombre());
+            }
+        });
+
+
+
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
@@ -189,8 +250,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
-            case R.id.action_settings:
-                onCreateDialog().show();
+            case R.id.action_addGroup:
+                a = onCreateDialog();
+                a.show();
+                return true;
+            case R.id.action_logout:
+                logout();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -210,23 +275,60 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 .setPositiveButton("Añadir", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        TextView namegroup =(TextView) findViewById(R.id.username);
-                        String nombreGrupo = namegroup.getText().toString();
-                        User u = returnUser();
-                        //addgroup(nombreGrupo,);
                         dialog.dismiss();
+                        addgroup();
                     }
                 })
                 .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.dismiss();
+                        decision = false;
                     }
-                });
+                })
+
+                .setTitle("Introduzca un nuevo grupo");
+
+
+
+
         return builder.create();
     }
 
-    private void addgroup() {
-        
-        
+    private void grupoExistente(final String nombreGrupo){
+        groupExists = false;
+        db.collection("groups").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()){
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        String id = document.getId();
+                        if(id == nombreGrupo){
+                            groupExists = true;
+                        }
+                    }
+                }
+            }
+
+        });
+
+    }
+
+    private boolean addgroup() {
+
+        groupName= a.findViewById(R.id.groupname);
+        String nombreGrupo = groupName.getText().toString();
+        grupoExistente(nombreGrupo);
+        if (groupExists){
+            return false;
+        }else {
+            UserList userList = new UserList();
+            userList.addUser(user.getEmail(),user);
+            Group group = new Group(nombreGrupo, userList);
+/*            ListGroups groups = user.getGroups();
+            groups.addGroup(nombreGrupo, group);*/
+            db.collection("Listagrupos").document(nombreGrupo).set(group);
+            numeroGruposUsuario();
+        }
+        return true;
     }
 }

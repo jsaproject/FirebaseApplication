@@ -1,5 +1,9 @@
 package com.example.juan_.practicafirebase.models;
 
+
+import com.google.firebase.firestore.IgnoreExtraProperties;
+
+@IgnoreExtraProperties
 public class Message {
 
     private String mensaje;

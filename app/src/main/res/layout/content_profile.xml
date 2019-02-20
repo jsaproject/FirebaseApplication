@@ -25,17 +25,28 @@
             android:layout_gravity="center_horizontal"
             android:text="TextView" />
 
-        <Button
-            android:id="@+id/buttonLogout"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="414dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="Logout" />
+            android:text="Grupos registrados en tu usuario" />
 
         <ListView
             android:id="@+id/ListaUsuarios"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"/>
+            android:layout_height="233dp"
+            android:layout_gravity="center_horizontal" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Grupos Disponibles" />
+
+        <ListView
+            android:id="@+id/listviewavailable"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

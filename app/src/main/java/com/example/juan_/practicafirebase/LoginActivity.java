@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.juan_.practicafirebase.models.Group;
 import com.example.juan_.practicafirebase.models.ListGroups;
 import com.example.juan_.practicafirebase.models.User;
 import com.example.juan_.practicafirebase.models.UserList;
@@ -116,7 +117,6 @@ public class LoginActivity extends AppCompatActivity implements  View.OnClickLis
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
-                    onAuthSuccess(task.getResult().getUser());
                     Toast.makeText(LoginActivity.this,"Comprueba",Toast.LENGTH_LONG).show();
 
                    finish();
@@ -153,78 +153,22 @@ public class LoginActivity extends AppCompatActivity implements  View.OnClickLis
     }
 
     private void writeNewUser(String userId, String name, String email) {
-        ListGroups ls = new ListGroups();
-        User user = new User(email, name, null, 0, ls);
-/*        User user2 = new User("k", null, name, null, 0);
-        User user3 = new User("j", null, name, null, 0);
-        final UserList userList = new UserList(user);
-        userList.setUsers(user2);
-        userList.setUsers(user3);*/
 
-/*        db.collection("users").document("ListUsers").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                DocumentSnapshot result = task.getResult();
-                if (task.isSuccessful()){
-                    a = (HashMap<String,Object>) result.get("users");
-                }else{
-                    a = null;
-                }
 
-            }
-        });
-        if (a != null){
-            users =  (HashMap<String, Object>) a.get("users");
-            users.put(user.getEmail(),user);
-            a.put("users",users);
-        }else{
-            users = new HashMap<>();
-            a = new HashMap<>();
-            users.put(user.getEmail(),user);
-            a.put("users",users);
-        }*/
 
+
+        UserList userList = new UserList();
+
+
+        User user = new User(email, name, null, 0);
 
 
 
         db.collection("users").document(user.getEmail()).set(user);
 
-        
-
 
     }
 
-/*    private void numeroUsuariosGrupo(){
-        DatabaseReference dinosaursRef = FirebaseDatabase.getInstance().getReference("users");
-        dinosaursRef.orderByKey().addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                User value = dataSnapshot.getValue(User.class);
-                String email = value.getEmail();
-                String password = value.getPassword();
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }*/
 
     @Override
     public void onClick(View view) {

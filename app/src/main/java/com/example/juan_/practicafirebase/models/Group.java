@@ -1,14 +1,22 @@
 package com.example.juan_.practicafirebase.models;
 
+import com.google.firebase.firestore.IgnoreExtraProperties;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+@IgnoreExtraProperties
 public class Group {
+
 
     private String nombreGrupo;
     private UserList usuarios;
     private MessageList listaMensajes;
+
+    public Group(){
+
+    }
 
     public Group(String nombreGrupo, UserList u) {
         this.nombreGrupo = nombreGrupo;

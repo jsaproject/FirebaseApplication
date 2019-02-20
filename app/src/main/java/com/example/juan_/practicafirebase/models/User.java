@@ -1,30 +1,31 @@
 package com.example.juan_.practicafirebase.models;
 
 
-import com.google.firebase.database.IgnoreExtraProperties;
+import com.google.firebase.firestore.Exclude;
+import com.google.firebase.firestore.IgnoreExtraProperties;
 
 import java.util.HashMap;
 import java.util.List;
 
-
+@IgnoreExtraProperties
 public class User {
 
     private String email;
     private String nombre;
     private String apellidos;
     private int telefono;
-    private ListGroups groups;
+    // private ListGroups groups;
 
     public User(){
 
     }
 
-    public User(String email, String nombre, String apellidos, int telefono, ListGroups ls) {
+    public User(String email, String nombre, String apellidos, int telefono) {
         this.email = email;
         this.nombre = nombre;
         this.apellidos = apellidos;
         this.telefono = telefono;
-        this.groups = ls;
+        //this.groups = ls;
     }
 
     public String getEmail() {
@@ -60,11 +61,11 @@ public class User {
     }
 
 
-    public ListGroups getGroups() {
+/*    public ListGroups getGroups() {
         return groups;
     }
 
     public void setGroups(ListGroups groups) {
         this.groups = groups;
-    }
+    }*/
 }

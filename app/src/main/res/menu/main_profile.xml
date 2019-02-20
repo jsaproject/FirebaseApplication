@@ -14,8 +14,14 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/app_bar_search"
-        android:icon="@drawable/ic_search_black_24dp"
-        android:title="Search group"
-        app:actionViewClass="android.widget.SearchView" />
+    android:id="@+id/app_bar_search"
+    android:icon="@drawable/ic_search_black_24dp"
+    android:title="Search group"
+    app:actionViewClass="android.widget.SearchView" />
+    <item
+        android:id="@+id/action_logout"
+        android:orderInCategory="400"
+        android:title="Logout"
+        app:showAsAction="never" />
+
 </menu>

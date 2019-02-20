@@ -1,6 +1,8 @@
 package com.example.juan_.practicafirebase.models;
 
 
+import com.google.firebase.firestore.IgnoreExtraProperties;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -9,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@IgnoreExtraProperties
 public class MessageList {
 
     private List<Message> messageList = new ArrayList<>();
