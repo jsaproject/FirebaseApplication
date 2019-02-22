@@ -41,6 +41,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -220,24 +221,34 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void initialiceUser() {
-        final String email = firebaseAuth.getCurrentUser().getEmail();
+        final String email2 = firebaseAuth.getCurrentUser().getEmail();
+        Task<DocumentSnapshot> documentSnapshotTask = db.collection("users").document("email2").get();
+        if (documentSnapshotTask.isComplete()){
+            user = documentSnapshotTask.getResult().toObject(User.class);
+        }
+
         db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful()){
                     for (QueryDocumentSnapshot document : task.getResult()){
                         String id = document.getId();
-                        if (id.equalsIgnoreCase(email)){
-                            user = document.toObject(User.class);
+                        if (id.equalsIgnoreCase(email2)){
+                            probar(document.toObject(User.class));
+
                         }
                     }
                 }
-                textViewUserEmail.setText("Bienvenido a la sesion " + user.getNombre());
+                textViewUserEmail.setText("Bienvenido a la sesion " + ProfileActivity.this.user.getNombre());
             }
         });
 
 
 
+    }
+
+    private void probar(User u) {
+        user = u;
     }
 
 
