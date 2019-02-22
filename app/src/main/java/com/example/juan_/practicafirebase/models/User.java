@@ -20,6 +20,13 @@ public class User {
 
     }
 
+    public User(User a){
+        this.email = a.getEmail();
+        this.nombre = a.nombre;
+        this.apellidos = a.apellidos;
+        this.telefono = a.telefono;
+    }
+
     public User(String email, String nombre, String apellidos, int telefono) {
         this.email = email;
         this.nombre = nombre;
