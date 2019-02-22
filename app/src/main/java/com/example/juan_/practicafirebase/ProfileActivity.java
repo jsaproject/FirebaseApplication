@@ -87,7 +87,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         listAvailable = (ListView) findViewById(R.id.listviewavailable);
         db = FirebaseFirestore.getInstance();
 
-        initialiceUser();
+        //initialiceUser();
 
         numeroGruposUsuario();
         numeroGruposUsuario2();
