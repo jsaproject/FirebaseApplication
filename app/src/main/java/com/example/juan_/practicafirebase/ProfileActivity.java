@@ -235,11 +235,14 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 if(task.isSuccessful()){
                     for (QueryDocumentSnapshot document : task.getResult()){
                         String id = document.getId();
-                        int size = 0;
+                        Long size = null;
+;
+                        ;
                         Map<String,Object> map = (HashMap<String,Object>)document.getData().get("usuarios");
                         for (Map.Entry<String, Object> entry : map.entrySet()) {
                             if(entry.getKey().equals("size")){
-                                size = (int)entry.getValue();
+                                size = (Long)entry.getValue();
+
                             }
                             if (entry.getKey().equals("users")) {
                                 a= (HashMap<String,Object>)entry.getValue();
@@ -290,7 +293,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     for (QueryDocumentSnapshot document : task.getResult()){
                         String id = document.getId();
                         if (id.equalsIgnoreCase(email2)){
-                            probar(document.toObject(User.class));
+                            user = document.toObject(User.class);
 
                         }
                     }
