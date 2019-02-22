@@ -48,6 +48,7 @@ public class LoginActivity extends AppCompatActivity implements  View.OnClickLis
     private ArrayList<String> listItems;
     private String email;
     private UserList userList1;
+    private User user;
 
 
 
@@ -66,7 +67,6 @@ public class LoginActivity extends AppCompatActivity implements  View.OnClickLis
             startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
         }
 
-        firebase = FirebaseDatabase.getInstance().getReference();
 
         db = FirebaseFirestore.getInstance();
 
@@ -110,7 +110,7 @@ public class LoginActivity extends AppCompatActivity implements  View.OnClickLis
     }
 
     private void loginUser() {
-        String email = editTextEmail.getText().toString().trim();
+        final String email = editTextEmail.getText().toString().trim();
         String password  = editTextPassword.getText().toString().trim();
 
         firebaseAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -160,11 +160,12 @@ public class LoginActivity extends AppCompatActivity implements  View.OnClickLis
         UserList userList = new UserList();
 
 
-        User user = new User(email, name, null, 0);
+        user = new User(email, name, null, 0);
 
 
 
         db.collection("users").document(user.getEmail()).set(user);
+
 
 
     }

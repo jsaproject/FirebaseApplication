@@ -37,6 +37,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -62,11 +63,14 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private FirebaseAuth firebaseAuth;
     private EditText groupName;
     private FirebaseFirestore db;
-    private User user;
+    public User user;
     private Boolean groupExists;
     private Dialog a;
     private Boolean decision;
     private ListView listAvailable;
+    private DatabaseReference reference;
+
+    private String value;
 
 
 
@@ -77,6 +81,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        reference = FirebaseDatabase.getInstance().getReference();
 
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -89,6 +94,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         //initialiceUser();
 
+
+        //initialiceUser2();
         numeroGruposUsuario();
         numeroGruposUsuario2();
 
@@ -100,6 +107,48 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 /*        buttonLogout.setOnClickListener(this);*/
     }
 
+    private void initialiceUser2() {
+
+        String s = usernameFromEmail(firebaseAuth.getCurrentUser().getEmail());
+        DatabaseReference users = reference.child("users");
+       users.addChildEventListener(new ChildEventListener() {
+           @Override
+           public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+               user = new User(dataSnapshot.getValue(User.class));
+
+               value = "com";
+           }
+
+           @Override
+           public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+           }
+
+           @Override
+           public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+           }
+
+           @Override
+           public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+           }
+
+           @Override
+           public void onCancelled(@NonNull DatabaseError databaseError) {
+
+           }
+       });
+    }
+
+
+    private String usernameFromEmail(String email) {
+        if (email.contains("@")) {
+            return email.split("@")[0];
+        } else {
+            return email;
+        }
+    }
 
     @Override
     public void onClick(View view) {
@@ -186,24 +235,34 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 if(task.isSuccessful()){
                     for (QueryDocumentSnapshot document : task.getResult()){
                         String id = document.getId();
+                        Long size = null;
+;
+                        ;
                         Map<String,Object> map = (HashMap<String,Object>)document.getData().get("usuarios");
                         for (Map.Entry<String, Object> entry : map.entrySet()) {
+                            if(entry.getKey().equals("size")){
+                                size = (Long)entry.getValue();
+
+                            }
                             if (entry.getKey().equals("users")) {
                                 a= (HashMap<String,Object>)entry.getValue();
                             }
                         }
-                        Set<String> strings = a.keySet();
-                        Iterator<String> iterator = strings.iterator();
-                        boolean not_encontrado = false;
-                        while(iterator.hasNext() && !not_encontrado){
-                            String next = iterator.next();
-                            if(next.equalsIgnoreCase(email)){
-                                not_encontrado = true;
+                        if(size < 7){
+                            Set<String> strings = a.keySet();
+                            Iterator<String> iterator = strings.iterator();
+                            boolean not_encontrado = false;
+                            while(iterator.hasNext() && !not_encontrado){
+                                String next = iterator.next();
+                                if(next.equalsIgnoreCase(email)){
+                                    not_encontrado = true;
+                                }
+                            }
+                            if(!not_encontrado){
+                                nombregrupos.add(document.getId());
                             }
                         }
-                        if(!not_encontrado){
-                            nombregrupos.add(document.getId());
-                        }
+
 
 
                     }
@@ -234,7 +293,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     for (QueryDocumentSnapshot document : task.getResult()){
                         String id = document.getId();
                         if (id.equalsIgnoreCase(email2)){
-                            probar(document.toObject(User.class));
+                            user = document.toObject(User.class);
 
                         }
                     }
@@ -248,7 +307,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void probar(User u) {
-        user = u;
+        user = new User(u);
     }
 
 
