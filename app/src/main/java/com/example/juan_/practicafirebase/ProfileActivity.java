@@ -168,7 +168,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 ListaUsuarios.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Toast.makeText(ProfileActivity.this,nombregrupos.get(position),Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+                        intent.putExtra("Grupo", nombregrupos.get(position));
+                        startActivity(intent);
                     }
                 });
             }
