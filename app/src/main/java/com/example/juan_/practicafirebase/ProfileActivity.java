@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
@@ -41,7 +40,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -54,23 +55,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextView textViewUserEmail;
-    private Button buttonLogout;
     private ListView ListaUsuarios;
-    private FirebaseAuth firebaseAuth;
+    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private EditText groupName;
     private FirebaseFirestore db;
     public User user;
-    private Boolean groupExists;
     private Dialog a;
-    private Boolean decision;
     private ListView listAvailable;
-    private DatabaseReference reference;
-
-    private String value;
+    private List<String> nombregrupos = new ArrayList<>();
+    private final String email = firebaseAuth.getCurrentUser().getEmail();
+    private final String nombre = usernameFromEmail(email);
 
 
 
@@ -81,74 +81,24 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        reference = FirebaseDatabase.getInstance().getReference();
 
         firebaseAuth = FirebaseAuth.getInstance();
 
-        textViewUserEmail =(TextView) findViewById(R.id.textViewUserEmail);
+        textViewUserEmail = (TextView) findViewById(R.id.textViewUserEmail);
 //        buttonLogout = (Button) findViewById(R.id.buttonLogout);
         ListaUsuarios = (ListView) findViewById(R.id.ListaUsuarios);
         groupName = (EditText) findViewById(R.id.groupname);
         listAvailable = (ListView) findViewById(R.id.listviewavailable);
         db = FirebaseFirestore.getInstance();
 
-        //initialiceUser();
+        initialiceUser();
+
+        gruposUsuarioRegistrado();
+        gruposUsuarioDisponibles();
 
 
-        //initialiceUser2();
-        numeroGruposUsuario();
-        numeroGruposUsuario2();
-
-
-
-
-
-        //textViewUserEmail.setText(firebaseAuth.getCurrentUser().getEmail());
-/*        buttonLogout.setOnClickListener(this);*/
     }
 
-    private void initialiceUser2() {
-
-        String s = usernameFromEmail(firebaseAuth.getCurrentUser().getEmail());
-        DatabaseReference users = reference.child("users");
-       users.addChildEventListener(new ChildEventListener() {
-           @Override
-           public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-               user = new User(dataSnapshot.getValue(User.class));
-
-               value = "com";
-           }
-
-           @Override
-           public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-           }
-
-           @Override
-           public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-           }
-
-           @Override
-           public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-           }
-
-           @Override
-           public void onCancelled(@NonNull DatabaseError databaseError) {
-
-           }
-       });
-    }
-
-
-    private String usernameFromEmail(String email) {
-        if (email.contains("@")) {
-            return email.split("@")[0];
-        } else {
-            return email;
-        }
-    }
 
     @Override
     public void onClick(View view) {
@@ -165,45 +115,52 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         startActivity(new Intent(getApplicationContext(), LoginActivity.class));
     }
 
+    private String usernameFromEmail(String email) {
+        if (email.contains("@")) {
+            return email.split("@")[0];
+        } else {
+            return email;
+        }
+    }
 
-    private void numeroGruposUsuario() {
-
-        final String email = firebaseAuth.getCurrentUser().getEmail();
-        db.collection("Listagrupos").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+    private void initialiceUser() {
+        db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                final List<String> nombregrupos = new ArrayList<>();
-
-                ArrayAdapter<String> arrayAdapter;
-                HashMap<String,Object> a = new HashMap<>();
-                if(task.isSuccessful()){
-                    for (QueryDocumentSnapshot document : task.getResult()){
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
                         String id = document.getId();
-                        Map<String,Object> map = (HashMap<String,Object>)document.getData().get("usuarios");
-                        for (Map.Entry<String, Object> entry : map.entrySet()) {
-                            if (entry.getKey().equals("users")) {
-                                a= (HashMap<String,Object>)entry.getValue();
-                            }
-                        }
-                        Set<String> strings = a.keySet();
-                        Iterator<String> iterator = strings.iterator();
-                        boolean not_encontrado = false;
-                        while(iterator.hasNext() && !not_encontrado){
-                            String next = iterator.next();
-                            if(next.equalsIgnoreCase(email)){
-                                not_encontrado = true;
-                            }
-                        }
-                        if(not_encontrado){
-                            nombregrupos.add(document.getId());
-                        }
+                        if (id.equalsIgnoreCase(email)) {
+                            user = document.toObject(User.class);
 
-
+                        }
                     }
-
                 }
+                textViewUserEmail.setText("Bienvenido a la sesion " + user.getNombre());
+            }
+        });
 
 
+    }
+
+
+    private void gruposUsuarioRegistrado() {
+        db.collection("Listagrupos").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+
+                final List<String> nombregrupos = new ArrayList<>();
+                ArrayAdapter<String> arrayAdapter;
+                Iterator<QueryDocumentSnapshot> iterator = queryDocumentSnapshots.iterator();
+
+                while (iterator.hasNext()) {
+                    QueryDocumentSnapshot next = iterator.next();
+                    HashMap<String, Object> lista_usuarios = (HashMap<String, Object>) next.getData().get("usuarios");
+                    HashMap<String, Object> usuariosimple = (HashMap<String, Object>) lista_usuarios.get("users");
+                    if (usuariosimple.containsKey(email)) {
+                        nombregrupos.add(next.getId());
+                    }
+                }
                 arrayAdapter = new ArrayAdapter<String>
                         (getApplicationContext(), android.R.layout.simple_list_item_1, nombregrupos);
                 arrayAdapter.notifyDataSetChanged();
@@ -211,115 +168,82 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 ListaUsuarios.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        String s = nombregrupos.get(position);
-
+                        Toast.makeText(ProfileActivity.this,nombregrupos.get(position),Toast.LENGTH_SHORT).show();
                     }
                 });
-
             }
         });
-
     }
 
 
-   private void numeroGruposUsuario2() {
-
-        final String email = firebaseAuth.getCurrentUser().getEmail();
-        db.collection("Listagrupos").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+    private void gruposUsuarioDisponibles() {
+        db.collection("Listagrupos").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                List<String> nombregrupos = new ArrayList<>();
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
 
                 ArrayAdapter<String> arrayAdapter2;
-                HashMap<String,Object> a = new HashMap<>();
-                if(task.isSuccessful()){
-                    for (QueryDocumentSnapshot document : task.getResult()){
-                        String id = document.getId();
-                        Long size = null;
-;
-                        ;
-                        Map<String,Object> map = (HashMap<String,Object>)document.getData().get("usuarios");
-                        for (Map.Entry<String, Object> entry : map.entrySet()) {
-                            if(entry.getKey().equals("size")){
-                                size = (Long)entry.getValue();
+                Iterator<QueryDocumentSnapshot> iterator = queryDocumentSnapshots.iterator();
 
-                            }
-                            if (entry.getKey().equals("users")) {
-                                a= (HashMap<String,Object>)entry.getValue();
-                            }
-                        }
-                        if(size < 7){
-                            Set<String> strings = a.keySet();
-                            Iterator<String> iterator = strings.iterator();
-                            boolean not_encontrado = false;
-                            while(iterator.hasNext() && !not_encontrado){
-                                String next = iterator.next();
-                                if(next.equalsIgnoreCase(email)){
-                                    not_encontrado = true;
-                                }
-                            }
-                            if(!not_encontrado){
-                                nombregrupos.add(document.getId());
-                            }
-                        }
-
-
-
+                while (iterator.hasNext()) {
+                    QueryDocumentSnapshot next = iterator.next();
+                    HashMap<String, Object> lista_usuarios = (HashMap<String, Object>) next.getData().get("usuarios");
+                    HashMap<String, Object> usuariosimple = (HashMap<String, Object>) lista_usuarios.get("users");
+                    boolean b = usuariosimple.containsKey(email);
+                    if (!usuariosimple.containsKey(email) && usuariosimple.size() < 7) {
+                        nombregrupos.add(next.getId());
                     }
-
                 }
-
 
                 arrayAdapter2 = new ArrayAdapter<String>
                         (getApplicationContext(), android.R.layout.simple_list_item_1, nombregrupos);
-                arrayAdapter2.notifyDataSetChanged();
                 listAvailable.setAdapter(arrayAdapter2);
-            }
-        });
+                listAvailable.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
 
-    }
-
-    private void initialiceUser() {
-        final String email2 = firebaseAuth.getCurrentUser().getEmail();
-        Task<DocumentSnapshot> documentSnapshotTask = db.collection("users").document("email2").get();
-        if (documentSnapshotTask.isComplete()){
-            user = documentSnapshotTask.getResult().toObject(User.class);
-        }
-
-        db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
-                    for (QueryDocumentSnapshot document : task.getResult()){
-                        String id = document.getId();
-                        if (id.equalsIgnoreCase(email2)){
-                            user = document.toObject(User.class);
-
-                        }
+                        Toast.makeText(ProfileActivity.this, nombregrupos.get(position),Toast.LENGTH_SHORT).show();
+                        Dialog addinGroup = dialogAddInGroup(nombregrupos.get(position));
+                        addinGroup.show();
                     }
-                }
-                textViewUserEmail.setText("Bienvenido a la sesion " + ProfileActivity.this.user.getNombre());
+                });
             }
         });
-
-
-
     }
 
-    private void probar(User u) {
-        user = new User(u);
+    private Dialog dialogAddInGroup(final String nombre_grupo) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
+
+
+        builder.setMessage("Desea ser incluido en el grupo " + nombre_grupo)
+                .setTitle("Incluir grupo")
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        registerGroupAvailable(nombre_grupo);
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+
+        return builder.create();
     }
 
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_profile, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        switch (item.getItemId()){
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
             case R.id.action_addGroup:
                 a = onCreateDialog();
                 a.show();
@@ -334,71 +258,74 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
 
     public Dialog onCreateDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        // Get the layout inflater
+        AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
         LayoutInflater inflater = this.getLayoutInflater();
-
-        // Inflate and set the layout for the dialog
-        // Pass null as the parent view because its going in the dialog layout
         builder.setView(inflater.inflate(R.layout.dialog_createnewgroup, null))
-                // Add action buttons
                 .setPositiveButton("Añadir", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.dismiss();
-                        addgroup();
+                        groupName = a.findViewById(R.id.groupname);
+                        final String nombreGrupo = groupName.getText().toString();
+                        Boolean encontrado = false;
+
+                            db.collection("Listagrupos").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    Boolean encontrado = false;
+                                    Iterator<QueryDocumentSnapshot> iterator = task.getResult().iterator();
+                                    while(iterator.hasNext() && !encontrado){
+                                        String id1 = iterator.next().getId();
+                                        if (id1.equalsIgnoreCase(nombreGrupo)){
+                                            encontrado=true;
+                                        }
+                                    }
+                                    if (encontrado) {
+                                        Toast.makeText(ProfileActivity.this, "Este grupo ya habia sido creado", Toast.LENGTH_LONG).show();
+                                    } else {
+                                        addgroup(nombreGrupo);
+                                    }
+
+                                }
+                            });
+
+
                     }
                 })
                 .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.dismiss();
-                        decision = false;
                     }
                 })
 
                 .setTitle("Introduzca un nuevo grupo");
 
 
-
-
         return builder.create();
     }
 
-    private void grupoExistente(final String nombreGrupo){
-        groupExists = false;
-        db.collection("groups").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()){
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        String id = document.getId();
-                        if(id == nombreGrupo){
-                            groupExists = true;
-                        }
-                    }
-                }
-            }
 
-        });
+
+
+    private void addgroup(String nombreGrupo) {
+        UserList userList = new UserList();
+        userList.addUser(email);
+        Group group = new Group(nombreGrupo, userList);
+        db.collection("Listagrupos").document(nombreGrupo).set(group);
 
     }
 
-    private boolean addgroup() {
-
-        groupName= a.findViewById(R.id.groupname);
-        String nombreGrupo = groupName.getText().toString();
-        grupoExistente(nombreGrupo);
-        if (groupExists){
-            return false;
-        }else {
-            UserList userList = new UserList();
-            userList.addUser(user.getEmail(),user);
-            Group group = new Group(nombreGrupo, userList);
-/*            ListGroups groups = user.getGroups();
-            groups.addGroup(nombreGrupo, group);*/
-            db.collection("Listagrupos").document(nombreGrupo).set(group);
-            numeroGruposUsuario();
-        }
-        return true;
+    private void registerGroupAvailable(final String nombre_grupo){
+        db.collection("Listagrupos").document(nombre_grupo).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                Map<String, Object> data = task.getResult().getData();
+                HashMap<String, Object> lista_usuarios = (HashMap<String, Object>) data.get("usuarios");
+                HashMap<String, Object> usuariosimple = (HashMap<String, Object>) lista_usuarios.get("users");
+                usuariosimple.put(email,null);
+                db.collection("Listagrupos").document(nombre_grupo).update(data);
+                //db.collection("Listagrupos").document(nombre_grupo).set(data);
+            }
+        });
     }
 }

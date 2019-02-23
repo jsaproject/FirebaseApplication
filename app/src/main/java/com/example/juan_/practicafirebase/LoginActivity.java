@@ -59,7 +59,6 @@ public class LoginActivity extends AppCompatActivity implements  View.OnClickLis
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        profileActivity = new ProfileActivity();
         firebaseAuth = FirebaseAuth.getInstance();
 
         if(firebaseAuth.getCurrentUser() != null){
@@ -117,9 +116,7 @@ public class LoginActivity extends AppCompatActivity implements  View.OnClickLis
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
-                    Toast.makeText(LoginActivity.this,"Comprueba",Toast.LENGTH_LONG).show();
-
-                   finish();
+                    finish();
 
                     startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
                 }else{
@@ -154,15 +151,9 @@ public class LoginActivity extends AppCompatActivity implements  View.OnClickLis
 
     private void writeNewUser(String userId, String name, String email) {
 
-
-
-
         UserList userList = new UserList();
 
-
         user = new User(email, name, null, 0);
-
-
 
         db.collection("users").document(user.getEmail()).set(user);
 
@@ -179,9 +170,5 @@ public class LoginActivity extends AppCompatActivity implements  View.OnClickLis
         if (view == buttonLogin){
             loginUser();
         }
-        if (view == textViewSignin){
-            startActivity(new Intent());
-        }
-
     }
 }
