@@ -25,10 +25,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 public class LoginActivity extends AppCompatActivity implements  View.OnClickListener{
@@ -41,9 +45,9 @@ public class LoginActivity extends AppCompatActivity implements  View.OnClickLis
     private Button   buttonLogin;
 
 
-    private FirebaseAuth firebaseAuth;
+    private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private DatabaseReference firebase;
-    private FirebaseFirestore db;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private ProfileActivity profileActivity;
     private ArrayList<String> listItems;
     private String email;
@@ -53,21 +57,41 @@ public class LoginActivity extends AppCompatActivity implements  View.OnClickLis
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
+        if(firebaseAuth.getCurrentUser() != null){
+            finish();
+            db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    Iterator<QueryDocumentSnapshot> iterator = task.getResult().iterator();
+                    Boolean encontrado = false;
+                    QueryDocumentSnapshot next = null;
+                    while(!encontrado && iterator.hasNext()){
+                        next = iterator.next();
+                        encontrado =next.getId().equalsIgnoreCase(firebaseAuth.getCurrentUser().getEmail());
+
+                    }
+                    if (encontrado){
+                        user = next.toObject(User.class);
+                        Intent intent = new Intent(LoginActivity.this, ProfileActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("User", user);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
+
+                    }
+                }
+            });
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        firebaseAuth = FirebaseAuth.getInstance();
-
-        if(firebaseAuth.getCurrentUser() != null){
-            finish();
-            startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
-        }
 
 
-        db = FirebaseFirestore.getInstance();
+
+
 
         buttonRegister = (Button)findViewById(R.id.buttonRegister);
         buttonLogin = (Button)findViewById(R.id.buttonLogin);
@@ -116,9 +140,28 @@ public class LoginActivity extends AppCompatActivity implements  View.OnClickLis
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
-                    finish();
+                    db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            Iterator<QueryDocumentSnapshot> iterator = task.getResult().iterator();
+                            Boolean encontrado = false;
+                            QueryDocumentSnapshot next = null;
+                            while(!encontrado && iterator.hasNext()){
+                                next = iterator.next();
+                                encontrado =next.getId().equalsIgnoreCase(firebaseAuth.getCurrentUser().getEmail());
 
-                    startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+                            }
+                            if (encontrado){
+                                user = next.toObject(User.class);
+                                Intent intent = new Intent(LoginActivity.this, ProfileActivity.class);
+                                Bundle bundle = new Bundle();
+                                bundle.putSerializable("User", user);
+                                intent.putExtras(bundle);
+                                startActivity(intent);
+
+                            }
+                        }
+                    });
                 }else{
                     Toast.makeText(LoginActivity.this,"User or password incorrect",Toast.LENGTH_LONG).show();
                 }

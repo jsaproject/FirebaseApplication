@@ -1,20 +1,23 @@
 package com.example.juan_.practicafirebase.models;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.IgnoreExtraProperties;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 
 @IgnoreExtraProperties
-public class User {
+public class User implements Serializable {
 
     private String email;
     private String nombre;
     private String apellidos;
     private int telefono;
-    // private ListGroups groups;
 
     public User(){
 
@@ -68,11 +71,4 @@ public class User {
     }
 
 
-/*    public ListGroups getGroups() {
-        return groups;
-    }
-
-    public void setGroups(ListGroups groups) {
-        this.groups = groups;
-    }*/
 }

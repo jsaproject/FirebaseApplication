@@ -19,21 +19,21 @@ public class UserList {
         this.users = new HashMap<>();
     }
 
-    public UserList(String key) {
+    public UserList(User u) {
         this.users = new HashMap<>();
-        users.put(key,null);
+        users.put(u.getEmail(),u);
     }
 
     public HashMap<String, Object> getUsers() {
         return users;
     }
 
-    public void setUsers(String key) {
-        users.put(key,null);;
+    public void setUsers(User u) {
+        users.put(u.getEmail(),u);;
     }
 
-    public void addUser (String key){
-        users.put(key,null);
+    public void addUser (User u){
+        setUsers(u);
     }
 
     public void remove (String key){

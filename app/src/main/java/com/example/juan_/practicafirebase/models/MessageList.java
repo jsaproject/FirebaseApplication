@@ -5,6 +5,7 @@ import com.google.firebase.firestore.IgnoreExtraProperties;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -14,22 +15,18 @@ import java.util.Set;
 @IgnoreExtraProperties
 public class MessageList {
 
-    private List<Message> messageList = new ArrayList<>();
+    private HashMap<Integer, Message> messageList;
 
     public MessageList() {
-        this.messageList = new ArrayList<>();
+        this.messageList = new HashMap<>();
     }
 
-    public List<Message> getMessageList() {
+    public HashMap<Integer, Message> getMessageList() {
         return messageList;
     }
 
-    public void setMessageList(List<Message> messageList) {
-        this.messageList = messageList;
-    }
-
-    public void addMessage(Message m){
-        messageList.add(m);
+    public void addMessage(Integer key, Message m){
+        messageList.put(key,m);
     }
 
     public void remove (Message m){
@@ -40,9 +37,12 @@ public class MessageList {
         boolean not_encontrado = true;
         Message m1 = new Message();
         while (not_encontrado){
-            Iterator<Message> iterator = messageList.iterator();
+            Set<Map.Entry<Integer, Message>> entries = messageList.entrySet();
+            Iterator<Map.Entry<Integer, Message>> iterator = entries.iterator();
+
             while(iterator.hasNext() && not_encontrado){
-                Message m = iterator.next();
+                Map.Entry<Integer, Message> next = iterator.next();
+                Message m = next.getValue();
                 if(m.getAutor().getEmail() == u.getEmail()){
                     not_encontrado = false;
                     m1 = m;
@@ -60,9 +60,10 @@ public class MessageList {
 
     public ArrayList<Message> getAllMessageUser(User u){
         ArrayList<Message> objects = new ArrayList<>();
-        Iterator<Message> iterator = messageList.iterator();
+        Set<Map.Entry<Integer, Message>> entries = messageList.entrySet();
+        Iterator<Map.Entry<Integer, Message>> iterator = entries.iterator();
         while(iterator.hasNext()){
-            Message m = iterator.next();
+            Message m = iterator.next().getValue();
             if(m.getAutor().getEmail() == u.getEmail()){
                 objects.add(m);
             }
@@ -74,9 +75,10 @@ public class MessageList {
 
     public List<String> allMessages(){
         List<String> messages = new ArrayList<>();
-        Iterator<Message> iterator = messageList.iterator();
+        Set<Map.Entry<Integer, Message>> entries = messageList.entrySet();
+        Iterator<Map.Entry<Integer, Message>> iterator = entries.iterator();
         while (iterator.hasNext()){
-            messages.add(iterator.next().getMensaje());
+            messages.add(iterator.next().getValue().getMensaje());
         }
         return messages;
     }
@@ -85,21 +87,7 @@ public class MessageList {
         return getFirstMessageUser(a)!=null;
     }
 
-    public boolean containsKey(String key){
-        boolean not_encontrado = true;
-        while (not_encontrado){
-            Iterator<Message> iterator = messageList.iterator();
-            while(iterator.hasNext() && not_encontrado){
-                Message m = iterator.next();
-                if(m.getMensaje().equalsIgnoreCase(key)){
-                    not_encontrado = false;
 
-                }
-            }
-
-        }
-        return not_encontrado;
-    }
 
     public boolean isEmpty(){
         return messageList.isEmpty();
@@ -108,7 +96,7 @@ public class MessageList {
 
     public Set<User> allUsers(){
         Set<User> a = new HashSet<>();
-        Iterator<Message> iterator = messageList.iterator();
+        Iterator<Message> iterator = messageList.values().iterator();
         while(iterator.hasNext()){
             Message m = iterator.next();
             a.add(m.getAutor());

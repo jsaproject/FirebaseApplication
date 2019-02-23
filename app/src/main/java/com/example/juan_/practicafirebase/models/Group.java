@@ -2,12 +2,13 @@ package com.example.juan_.practicafirebase.models;
 
 import com.google.firebase.firestore.IgnoreExtraProperties;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 @IgnoreExtraProperties
-public class Group {
+public class Group implements Serializable {
 
 
     private String nombreGrupo;

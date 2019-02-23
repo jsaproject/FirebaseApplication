@@ -81,7 +81,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
+        Intent intent = this.getIntent();
+        Bundle extras = intent.getExtras();
+        user = (User) extras.getSerializable("User");
         firebaseAuth = FirebaseAuth.getInstance();
 
         textViewUserEmail = (TextView) findViewById(R.id.textViewUserEmail);
@@ -124,23 +126,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void initialiceUser() {
-        db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        String id = document.getId();
-                        if (id.equalsIgnoreCase(email)) {
-                            user = document.toObject(User.class);
-
-                        }
-                    }
-                }
-                textViewUserEmail.setText("Bienvenido a la sesion " + user.getNombre());
-            }
-        });
-
-
+        textViewUserEmail.setText("Bienvenido a la sesion " + user.getNombre());
     }
 
 
@@ -153,12 +139,14 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 ArrayAdapter<String> arrayAdapter;
                 Iterator<QueryDocumentSnapshot> iterator = queryDocumentSnapshots.iterator();
 
+
                 while (iterator.hasNext()) {
                     QueryDocumentSnapshot next = iterator.next();
-                    HashMap<String, Object> lista_usuarios = (HashMap<String, Object>) next.getData().get("usuarios");
+                   HashMap<String, Object> lista_usuarios = (HashMap<String, Object>) next.getData().get("usuarios");
                     HashMap<String, Object> usuariosimple = (HashMap<String, Object>) lista_usuarios.get("users");
                     if (usuariosimple.containsKey(email)) {
                         nombregrupos.add(next.getId());
+
                     }
                 }
                 arrayAdapter = new ArrayAdapter<String>
@@ -168,8 +156,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 ListaUsuarios.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
-                        intent.putExtra("Grupo", nombregrupos.get(position));
+                        Intent intent = new Intent(ProfileActivity.this, ChatActivity.class);
+                        String s = nombregrupos.get(position);
+                        intent.putExtra("Grupo", s);
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("User", user);
+                        intent.putExtras(bundle);
                         startActivity(intent);
                     }
                 });
@@ -311,7 +303,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private void addgroup(String nombreGrupo) {
         UserList userList = new UserList();
-        userList.addUser(email);
+        userList.addUser(user);
         Group group = new Group(nombreGrupo, userList);
         db.collection("Listagrupos").document(nombreGrupo).set(group);
 
@@ -324,7 +316,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 Map<String, Object> data = task.getResult().getData();
                 HashMap<String, Object> lista_usuarios = (HashMap<String, Object>) data.get("usuarios");
                 HashMap<String, Object> usuariosimple = (HashMap<String, Object>) lista_usuarios.get("users");
-                usuariosimple.put(email,null);
+                usuariosimple.put(email,user);
                 db.collection("Listagrupos").document(nombre_grupo).update(data);
                 //db.collection("Listagrupos").document(nombre_grupo).set(data);
             }
