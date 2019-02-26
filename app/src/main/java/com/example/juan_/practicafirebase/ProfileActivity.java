@@ -68,7 +68,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     public User user;
     private Dialog a;
     private ListView listAvailable;
-    private List<String> nombregrupos = new ArrayList<>();
     private final String email = firebaseAuth.getCurrentUser().getEmail();
     private final String nombre = usernameFromEmail(email);
 
@@ -135,15 +134,16 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
 
-                final List<String> nombregrupos = new ArrayList<>();
+
                 ArrayAdapter<String> arrayAdapter;
                 Iterator<QueryDocumentSnapshot> iterator = queryDocumentSnapshots.iterator();
-
+                final List<String> nombregrupos = new ArrayList<>();
 
                 while (iterator.hasNext()) {
                     QueryDocumentSnapshot next = iterator.next();
                    HashMap<String, Object> lista_usuarios = (HashMap<String, Object>) next.getData().get("usuarios");
                     HashMap<String, Object> usuariosimple = (HashMap<String, Object>) lista_usuarios.get("users");
+
                     if (usuariosimple.containsKey(email)) {
                         nombregrupos.add(next.getId());
 
@@ -174,7 +174,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         db.collection("Listagrupos").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-
+                final List<String> nombregrupos = new ArrayList<>();
                 ArrayAdapter<String> arrayAdapter2;
                 Iterator<QueryDocumentSnapshot> iterator = queryDocumentSnapshots.iterator();
 
@@ -278,6 +278,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                                         Toast.makeText(ProfileActivity.this, "Este grupo ya habia sido creado", Toast.LENGTH_LONG).show();
                                     } else {
                                         addgroup(nombreGrupo);
+                                        gruposUsuarioDisponibles();
                                     }
 
                                 }
