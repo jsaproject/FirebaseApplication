@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -81,7 +82,7 @@ public class ChatActivity extends AppCompatActivity implements  View.OnClickList
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                 ArrayAdapter<String> arrayAdapter;
-                List<String> nombregrupos = new ArrayList<>();
+                List<Map<String, String>> data = new ArrayList<Map<String, String>>();
                 HashMap<String, Object> hash_usuarios = (HashMap<String, Object>) documentSnapshot.get("usuarios");
                 HashMap<String, Object> lista_usuarios = (HashMap<String, Object>) hash_usuarios.get("users");
                 HashMap<String, Object> hash_mensajes = (HashMap<String, Object>) documentSnapshot.get("listaMensajes");
@@ -91,20 +92,32 @@ public class ChatActivity extends AppCompatActivity implements  View.OnClickList
                 while(i<size){
                     String s = Integer.toString(i);
                     HashMap<String,String> o= (HashMap<String,String>)lista_mensajes.get(s);
+                    Map<String, String> datum = new HashMap<String, String>(2);
                     String mensaje = o.get("mensaje");
-                    nombregrupos.add(i,mensaje);
+                    String autor = o.get("autor");
+                    //HashMap<String,String> nombre = (HashMap<String,String>) o.get("autor");
+                    //String nombre1 = nombre.get("nombre");
+                    datum.put("First Line",autor);
+                    datum.put("Second Line",mensaje);
+                    datum.put("Third Line", "Fecha");
+                    data.add(datum);
                     i++;
                 }
 
-                arrayAdapter = new ArrayAdapter<String>
-                        (getApplicationContext(), android.R.layout.simple_list_item_1, nombregrupos);
-                arrayAdapter.notifyDataSetChanged();
-                listamessages.setAdapter(arrayAdapter);
+                SimpleAdapter adapter = new SimpleAdapter(getApplicationContext(), data,
+                        android.R.layout.simple_list_item_2,
+                        new String[] {"First Line", "Second Line"},
+                        new int[] {android.R.id.text1, android.R.id.text2});
+
+                adapter.notifyDataSetChanged();
+                listamessages.setAdapter(adapter);
 
             }
         });
 
     }
+
+
 
     @Override
     public void onClick(View view) {
@@ -118,7 +131,7 @@ public class ChatActivity extends AppCompatActivity implements  View.OnClickList
     private void mandarMensaje() {
         String s = editText.getText().toString();
         if (!s.equalsIgnoreCase("")){
-            final Message message = new Message(s, user);
+            final Message message = new Message(s, user.getNombre());
             db.collection("Listagrupos").document(nombre_grupo_string).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {

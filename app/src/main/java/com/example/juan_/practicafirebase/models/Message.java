@@ -7,13 +7,14 @@ import com.google.firebase.firestore.IgnoreExtraProperties;
 public class Message {
 
     private String mensaje;
-    private User autor;
+    private String autor;
+
 
     public Message(){
 
     }
 
-    public Message(String mensaje, User autor) {
+    public Message(String mensaje, String autor) {
         this.mensaje = mensaje;
         this.autor = autor;
     }
@@ -26,11 +27,11 @@ public class Message {
         this.mensaje = mensaje;
     }
 
-    public User getAutor() {
+    public String getAutor() {
         return autor;
     }
 
-    public void setAutor(User autor) {
+    public void setAutor(String autor) {
         this.autor = autor;
     }
 }

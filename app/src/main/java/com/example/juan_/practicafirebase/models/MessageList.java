@@ -43,7 +43,7 @@ public class MessageList {
             while(iterator.hasNext() && not_encontrado){
                 Map.Entry<Integer, Message> next = iterator.next();
                 Message m = next.getValue();
-                if(m.getAutor().getEmail() == u.getEmail()){
+                if(m.getAutor() == usernameFromEmail(u.getEmail())){
                     not_encontrado = false;
                     m1 = m;
                 }
@@ -58,13 +58,21 @@ public class MessageList {
         }
     }
 
+    private String usernameFromEmail(String email) {
+        if (email.contains("@")) {
+            return email.split("@")[0];
+        } else {
+            return email;
+        }
+    }
+
     public ArrayList<Message> getAllMessageUser(User u){
         ArrayList<Message> objects = new ArrayList<>();
         Set<Map.Entry<Integer, Message>> entries = messageList.entrySet();
         Iterator<Map.Entry<Integer, Message>> iterator = entries.iterator();
         while(iterator.hasNext()){
             Message m = iterator.next().getValue();
-            if(m.getAutor().getEmail() == u.getEmail()){
+            if(m.getAutor() == usernameFromEmail(u.getEmail())){
                 objects.add(m);
             }
         }
@@ -94,8 +102,8 @@ public class MessageList {
     }
 
 
-    public Set<User> allUsers(){
-        Set<User> a = new HashSet<>();
+    public Set<String> allUsers(){
+        Set<String> a = new HashSet<>();
         Iterator<Message> iterator = messageList.values().iterator();
         while(iterator.hasNext()){
             Message m = iterator.next();
