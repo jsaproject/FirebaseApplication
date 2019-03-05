@@ -14,18 +14,20 @@ import com.example.juan_.practicafirebase.models.MessageList;
 
 import java.util.ArrayList;
 
-public class CustomAdapter extends ArrayAdapter<Message>{
+public class CustomAdapter extends ArrayAdapter<Message> {
 
-    private MessageList dataSet;
+    private ArrayList<Message> dataSet;
     Context mContext;
     private int lastPosition;
 
-    public CustomAdapter(Context context, int resource, MessageList dataSet, Context mContext) {
-        super(context, resource);
-        this.dataSet = dataSet;
-        this.mContext = mContext;
+    public CustomAdapter(ArrayList<Message> data, Context context) {
+        super(context, R.layout.row_item, data);
+        this.dataSet = data;
+        this.mContext = context;
         this.lastPosition = -1;
+
     }
+
 
     // View lookup cache
     private static class ViewHolder {
@@ -36,13 +38,10 @@ public class CustomAdapter extends ArrayAdapter<Message>{
     }
 
 
-
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        // Get the data item for this position
+
         Message dataModel = getItem(position);
-        // Check if an existing view is being reused, otherwise inflate the view
         ViewHolder viewHolder; // view lookup cache stored in tag
 
         final View result;
@@ -54,24 +53,24 @@ public class CustomAdapter extends ArrayAdapter<Message>{
             convertView = inflater.inflate(R.layout.row_item, parent, false);
             viewHolder.txtName = (TextView) convertView.findViewById(R.id.name);
             viewHolder.txtType = (TextView) convertView.findViewById(R.id.type);
-            viewHolder.txtVersion = (TextView) convertView.findViewById(R.id.version_number);
+            viewHolder.txtVersion = (TextView) convertView.findViewById(R.id.fecha);
 
-
-            result=convertView;
+            //result = convertView;
 
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
-            result=convertView;
+            //result = convertView;
         }
 
+            lastPosition = position;
 
-        lastPosition = position;
+            viewHolder.txtName.setText(dataModel.getAutor());
+            viewHolder.txtType.setText(dataModel.getMensaje());
+            viewHolder.txtVersion.setText(dataModel.getFecha());
 
-        /*viewHolder.txtName.setText(dataModel.getName());
-        viewHolder.txtType.setText(dataModel.getType());
-        viewHolder.txtVersion.setText(dataModel.getVersion_number());*/
+            return convertView;
+        }
 
-        return convertView;
     }
-}
+

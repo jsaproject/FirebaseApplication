@@ -8,15 +8,16 @@ public class Message {
 
     private String mensaje;
     private String autor;
+    private String fecha;
 
-
-    public Message(){
+    public Message() {
 
     }
 
-    public Message(String mensaje, String autor) {
+    public Message(String mensaje, String autor, String fecha) {
         this.mensaje = mensaje;
         this.autor = autor;
+        this.fecha = fecha;
     }
 
     public String getMensaje() {
@@ -33,5 +34,13 @@ public class Message {
 
     public void setAutor(String autor) {
         this.autor = autor;
+    }
+
+    public String getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(String fecha) {
+        this.fecha = fecha;
     }
 }

@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.example.juan_.practicafirebase.models.Group;
 import com.example.juan_.practicafirebase.models.Message;
+import com.example.juan_.practicafirebase.models.MessageList;
 import com.example.juan_.practicafirebase.models.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -28,7 +29,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -46,6 +51,7 @@ public class ChatActivity extends AppCompatActivity implements  View.OnClickList
     private ListView listamessages;
     private Button sendMessage;
     private EditText editText;
+    private String fecha;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,12 +88,19 @@ public class ChatActivity extends AppCompatActivity implements  View.OnClickList
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                 ArrayAdapter<String> arrayAdapter;
+                int size;
                 List<Map<String, String>> data = new ArrayList<Map<String, String>>();
                 HashMap<String, Object> hash_usuarios = (HashMap<String, Object>) documentSnapshot.get("usuarios");
                 HashMap<String, Object> lista_usuarios = (HashMap<String, Object>) hash_usuarios.get("users");
                 HashMap<String, Object> hash_mensajes = (HashMap<String, Object>) documentSnapshot.get("listaMensajes");
                 HashMap<Integer, Object> lista_mensajes = (HashMap<Integer, Object>) hash_mensajes.get("messageList");
-                int size = lista_mensajes.size();
+                ArrayList<Message> dataset = new ArrayList<>();
+                if (lista_mensajes != null){
+                     size = lista_mensajes.size();
+                }else{
+                    size = -1;
+                }
+
                 int i = 0;
                 while(i<size){
                     String s = Integer.toString(i);
@@ -95,22 +108,28 @@ public class ChatActivity extends AppCompatActivity implements  View.OnClickList
                     Map<String, String> datum = new HashMap<String, String>(2);
                     String mensaje = o.get("mensaje");
                     String autor = o.get("autor");
+                    String fecha = o.get("fecha");
                     //HashMap<String,String> nombre = (HashMap<String,String>) o.get("autor");
                     //String nombre1 = nombre.get("nombre");
+                    Message message = new Message(mensaje, autor, fecha);
+                    dataset.add(message);
                     datum.put("First Line",autor);
+
                     datum.put("Second Line",mensaje);
                     datum.put("Third Line", "Fecha");
                     data.add(datum);
                     i++;
                 }
 
-                SimpleAdapter adapter = new SimpleAdapter(getApplicationContext(), data,
+                CustomAdapter customAdapter = new CustomAdapter(dataset, getApplicationContext());
+                listamessages.setAdapter(customAdapter);
+/*                SimpleAdapter adapter = new SimpleAdapter(getApplicationContext(), data,
                         android.R.layout.simple_list_item_2,
                         new String[] {"First Line", "Second Line"},
                         new int[] {android.R.id.text1, android.R.id.text2});
 
                 adapter.notifyDataSetChanged();
-                listamessages.setAdapter(adapter);
+                listamessages.setAdapter(adapter);*/
 
             }
         });
@@ -131,14 +150,27 @@ public class ChatActivity extends AppCompatActivity implements  View.OnClickList
     private void mandarMensaje() {
         String s = editText.getText().toString();
         if (!s.equalsIgnoreCase("")){
-            final Message message = new Message(s, user.getNombre());
+            String pattern = "MM/dd/yyyy HH:mm:ss";
+
+
+            DateFormat df = new SimpleDateFormat(pattern);
+
+
+            Date today = Calendar.getInstance().getTime();
+
+            String todayAsString = df.format(today);
+            final Message message = new Message(s, user.getNombre(), todayAsString);
             db.collection("Listagrupos").document(nombre_grupo_string).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     Map<String, Object> data = task.getResult().getData();
+
                     HashMap<String, Object> hash_mensajes = (HashMap<String, Object>) data.get("listaMensajes");
                     HashMap<String, Object> lista_mensajes = (HashMap<String, Object>) hash_mensajes.get("messageList");
-                    int size = lista_mensajes.size();
+                    int size = 0;
+                    if(lista_mensajes!= null){
+                        size = lista_mensajes.size();
+                    }
                     String s1 = Integer.toString(size);
                     lista_mensajes.put(s1,message);
 
