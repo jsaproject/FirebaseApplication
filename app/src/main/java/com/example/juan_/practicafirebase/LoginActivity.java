@@ -85,9 +85,9 @@ public class LoginActivity extends AppCompatActivity implements  View.OnClickLis
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.main_page_toolbar);
         setSupportActionBar(toolbar);
-
+        getSupportActionBar().setTitle("WhatsApp");
 
 
 

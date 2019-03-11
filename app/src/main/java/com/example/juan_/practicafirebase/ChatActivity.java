@@ -57,7 +57,7 @@ public class ChatActivity extends AppCompatActivity implements  View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.main_page_toolbar);
         setSupportActionBar(toolbar);
         db = FirebaseFirestore.getInstance();
 
@@ -107,7 +107,7 @@ public class ChatActivity extends AppCompatActivity implements  View.OnClickList
                     HashMap<String,String> o= (HashMap<String,String>)lista_mensajes.get(s);
                     Map<String, String> datum = new HashMap<String, String>(2);
                     String mensaje = o.get("mensaje");
-                    String autor = o.get("autor");
+                     String autor = o.get("autor");
                     String fecha = o.get("fecha");
                     //HashMap<String,String> nombre = (HashMap<String,String>) o.get("autor");
                     //String nombre1 = nombre.get("nombre");
