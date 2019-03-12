@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -70,6 +72,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private ListView listAvailable;
     private final String email = firebaseAuth.getCurrentUser().getEmail();
     private final String nombre = usernameFromEmail(email);
+    private ViewPager myViewPager;
+    private TabLayout myTabLayout;
+    private TabsAcessorAdapter myTabsAcessorAdapter;
 
 
 
@@ -91,6 +96,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         groupName = (EditText) findViewById(R.id.groupname);
         listAvailable = (ListView) findViewById(R.id.listviewavailable);
         db = FirebaseFirestore.getInstance();
+
+        myViewPager = (ViewPager) findViewById(R.id.main_tabs_pager);
+        myTabsAcessorAdapter = new TabsAcessorAdapter(getSupportFragmentManager());
+        myViewPager.setAdapter(myTabsAcessorAdapter);
+
+        myTabLayout = (TabLayout) findViewById(R.id.main_tabs);
+        myTabLayout.setupWithViewPager(myViewPager);
 
         initialiceUser();
 
