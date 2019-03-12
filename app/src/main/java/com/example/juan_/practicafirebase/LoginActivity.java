@@ -41,7 +41,6 @@ public class LoginActivity extends AppCompatActivity implements  View.OnClickLis
     private Button buttonRegister;
     private EditText editTextEmail;
     private EditText editTextPassword;
-    private TextView textViewSignin;
     private Button   buttonLogin;
 
 
@@ -85,18 +84,13 @@ public class LoginActivity extends AppCompatActivity implements  View.OnClickLis
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        Toolbar toolbar = findViewById(R.id.main_page_toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("WhatsApp");
 
 
 
-
-
-        buttonRegister = (Button)findViewById(R.id.buttonRegister);
-        buttonLogin = (Button)findViewById(R.id.buttonLogin);
-        editTextEmail = (EditText)findViewById(R.id.editTextEmail);
-        editTextPassword = (EditText)findViewById(R.id.editTextPassword);
+        buttonRegister = (Button)findViewById(R.id.phone_register_button);
+        buttonLogin = (Button)findViewById(R.id.phone_login_button);
+        editTextEmail = (EditText)findViewById(R.id.login_email);
+        editTextPassword = (EditText)findViewById(R.id.login_password);
 
 
 
@@ -107,30 +101,7 @@ public class LoginActivity extends AppCompatActivity implements  View.OnClickLis
     }
 
 
-    private void registerUser(){
 
-        String email = editTextEmail.getText().toString().trim();
-        String password  = editTextPassword.getText().toString().trim();
-
-        //creating a new user
-        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                //checking if success
-                if(task.isSuccessful()){
-                    onAuthSuccess(task.getResult().getUser());
-                    Toast.makeText(LoginActivity.this,"Registration correct",Toast.LENGTH_LONG).show();
-                }else{
-                    //display some message here
-                    Toast.makeText(LoginActivity.this,"Registration Error",Toast.LENGTH_LONG).show();
-                }
-
-            }
-        });
-
-
-
-    }
 
     private void loginUser() {
         final String email = editTextEmail.getText().toString().trim();
@@ -158,7 +129,6 @@ public class LoginActivity extends AppCompatActivity implements  View.OnClickLis
                                 bundle.putSerializable("User", user);
                                 intent.putExtras(bundle);
                                 startActivity(intent);
-
                             }
                         }
                     });
@@ -168,47 +138,14 @@ public class LoginActivity extends AppCompatActivity implements  View.OnClickLis
             }
         });
 
-
-
-    }
-
-
-
-    
-
-    private void onAuthSuccess(FirebaseUser user) {
-        String username = usernameFromEmail(user.getEmail());
-
-        // Write new user
-        writeNewUser(user.getUid(), username, user.getEmail());
-
-    }
-
-    private String usernameFromEmail(String email) {
-        if (email.contains("@")) {
-            return email.split("@")[0];
-        } else {
-            return email;
-        }
-    }
-
-    private void writeNewUser(String userId, String name, String email) {
-
-        UserList userList = new UserList();
-
-        user = new User(email, name, null, 0);
-
-        db.collection("users").document(user.getEmail()).set(user);
-
-
-
     }
 
 
     @Override
     public void onClick(View view) {
-        if (view == buttonRegister){
-            registerUser();
+       if (view == buttonRegister){
+            finish();
+            startActivity(new Intent(LoginActivity.this,RegisterActivity.class));
         }
         if (view == buttonLogin){
             loginUser();

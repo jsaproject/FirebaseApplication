@@ -17,7 +17,7 @@ public class User implements Serializable {
     private String email;
     private String nombre;
     private String apellidos;
-    private int telefono;
+    private String telefono;
 
     public User(){
 
@@ -30,7 +30,7 @@ public class User implements Serializable {
         this.telefono = a.telefono;
     }
 
-    public User(String email, String nombre, String apellidos, int telefono) {
+    public User(String email, String nombre, String apellidos, String telefono) {
         this.email = email;
         this.nombre = nombre;
         this.apellidos = apellidos;
@@ -62,13 +62,11 @@ public class User implements Serializable {
         this.apellidos = apellidos;
     }
 
-    public int getTelefono() {
+    public String getTelefono() {
         return telefono;
     }
 
-    public void setTelefono(int telefono) {
+    public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
-
-
 }
