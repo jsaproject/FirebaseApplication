@@ -44,6 +44,7 @@ public class RegisterActivity extends AppCompatActivity implements  View.OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
+
         buttonRegister = (Button)findViewById(R.id.register_button);
 
         editTextEmail = (EditText)findViewById(R.id.register_email);
@@ -52,8 +53,10 @@ public class RegisterActivity extends AppCompatActivity implements  View.OnClick
         editTextApellidos = (EditText) findViewById(R.id.register_apellidos);
         editTextNumero = (EditText) findViewById(R.id.register_telefono);
 
+        db = FirebaseFirestore.getInstance();
 
         buttonRegister.setOnClickListener(this);
+
 
 
 
@@ -76,6 +79,8 @@ public class RegisterActivity extends AppCompatActivity implements  View.OnClick
                 if(task.isSuccessful()){
                     onAuthSuccess(task.getResult().getUser());
                     Toast.makeText(RegisterActivity.this,"Registration correct",Toast.LENGTH_LONG).show();
+                    finish();
+                    startActivity(new Intent(RegisterActivity.this,LoginActivity.class));
                 }else{
                     //display some message here
                     Toast.makeText(RegisterActivity.this,"Registration Error",Toast.LENGTH_LONG).show();
@@ -122,8 +127,7 @@ public class RegisterActivity extends AppCompatActivity implements  View.OnClick
     public void onClick(View v) {
         if (v == buttonRegister){
             registerUser();
-            finish();
-            startActivity(new Intent(RegisterActivity.this,LoginActivity.class));
+
         }
 
     }

@@ -7,11 +7,18 @@
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
+        android:id= "@+id/text_group_available"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Groups Fragment"
-        android:layout_centerInParent="true"
+        android:text="Grupos Disponibles"
         android:textSize="26sp"
         android:textStyle="bold" />
+
+
+    <ListView
+        android:id="@+id/listviewavailable"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_group_available"/>
 
 </RelativeLayout>

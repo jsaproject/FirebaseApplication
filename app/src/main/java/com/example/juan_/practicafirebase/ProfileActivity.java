@@ -48,6 +48,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -97,17 +99,19 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         listAvailable = (ListView) findViewById(R.id.listviewavailable);
         db = FirebaseFirestore.getInstance();
 
-        myViewPager = (ViewPager) findViewById(R.id.main_tabs_pager);
+        /*myViewPager = (ViewPager) findViewById(R.id.main_tabs_pager);
         myTabsAcessorAdapter = new TabsAcessorAdapter(getSupportFragmentManager());
         myViewPager.setAdapter(myTabsAcessorAdapter);
 
         myTabLayout = (TabLayout) findViewById(R.id.main_tabs);
-        myTabLayout.setupWithViewPager(myViewPager);
+        myTabLayout.setupWithViewPager(myViewPager);*/
 
         initialiceUser();
 
         gruposUsuarioRegistrado();
         gruposUsuarioDisponibles();
+
+
 
 
     }
