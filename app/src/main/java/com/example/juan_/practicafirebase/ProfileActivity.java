@@ -261,6 +261,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.action_logout:
                 logout();
                 return true;
+            case R.id.app_bar_search:
+                finish();
+                startActivity(new Intent(ProfileActivity.this, UploadFile.class));
             default:
                 return super.onOptionsItemSelected(item);
         }
