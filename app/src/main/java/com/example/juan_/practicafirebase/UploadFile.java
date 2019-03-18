@@ -67,7 +67,9 @@ public class UploadFile extends AppCompatActivity {
 
     private void uploadImage(){
 
+
         StorageReference riversRef = storageReference.child("images/"+ filePath.getLastPathSegment());
+
         UploadTask uploadTask = riversRef.putFile(filePath);
 
 // Register observers to listen for when the download is done or if it fails

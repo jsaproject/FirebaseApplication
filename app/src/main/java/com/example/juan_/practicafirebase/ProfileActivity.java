@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.example.juan_.practicafirebase.models.Group;
 import com.example.juan_.practicafirebase.models.ListGroups;
+import com.example.juan_.practicafirebase.models.MessageList;
 import com.example.juan_.practicafirebase.models.User;
 import com.example.juan_.practicafirebase.models.UserList;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -324,7 +325,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private void addgroup(String nombreGrupo) {
         UserList userList = new UserList();
         userList.addUser(user);
-        Group group = new Group(nombreGrupo, userList);
+        MessageList messageList = new MessageList();
+        Group group = new Group(nombreGrupo, userList, messageList, 0);
         db.collection("Listagrupos").document(nombreGrupo).set(group);
 
     }

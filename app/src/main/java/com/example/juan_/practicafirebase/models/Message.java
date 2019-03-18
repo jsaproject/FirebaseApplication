@@ -9,15 +9,17 @@ public class Message {
     private String mensaje;
     private String autor;
     private String fecha;
+    private boolean foto;
 
     public Message() {
 
     }
 
-    public Message(String mensaje, String autor, String fecha) {
+    public Message(String mensaje, String autor, String fecha, boolean foto) {
         this.mensaje = mensaje;
         this.autor = autor;
         this.fecha = fecha;
+        this.foto = foto;
     }
 
     public String getMensaje() {
@@ -43,4 +45,15 @@ public class Message {
     public void setFecha(String fecha) {
         this.fecha = fecha;
     }
+
+    public boolean isFoto() {
+        return foto;
+    }
+
+    public void setFoto(boolean foto) {
+        this.foto = foto;
+    }
+
+
 }
+

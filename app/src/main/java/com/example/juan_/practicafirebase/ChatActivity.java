@@ -111,7 +111,7 @@ public class ChatActivity extends AppCompatActivity implements  View.OnClickList
                     String fecha = o.get("fecha");
                     //HashMap<String,String> nombre = (HashMap<String,String>) o.get("autor");
                     //String nombre1 = nombre.get("nombre");
-                    Message message = new Message(mensaje, autor, fecha);
+                    Message message = new Message(mensaje, autor, fecha, false);
                     dataset.add(message);
                     datum.put("First Line",autor);
 
@@ -159,7 +159,7 @@ public class ChatActivity extends AppCompatActivity implements  View.OnClickList
             Date today = Calendar.getInstance().getTime();
 
             String todayAsString = df.format(today);
-            final Message message = new Message(s, user.getNombre(), todayAsString);
+            final Message message = new Message(s, user.getNombre(), todayAsString, false);
             db.collection("Listagrupos").document(nombre_grupo_string).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {

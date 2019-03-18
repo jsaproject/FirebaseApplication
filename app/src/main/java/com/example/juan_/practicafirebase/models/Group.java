@@ -14,15 +14,17 @@ public class Group implements Serializable {
     private String nombreGrupo;
     private UserList usuarios;
     private MessageList listaMensajes;
+    private int num_last_photo;
 
     public Group(){
 
     }
 
-    public Group(String nombreGrupo, UserList u) {
+    public Group(String nombreGrupo, UserList usuarios, MessageList listaMensajes, int num_last_photo) {
         this.nombreGrupo = nombreGrupo;
-        this.usuarios = u;
-        this.listaMensajes = new MessageList();
+        this.usuarios = usuarios;
+        this.listaMensajes = listaMensajes;
+        this.num_last_photo = num_last_photo;
     }
 
     public String getNombreGrupo() {
@@ -47,5 +49,13 @@ public class Group implements Serializable {
 
     public void setListaMensajes(MessageList listaMensajes) {
         this.listaMensajes = listaMensajes;
+    }
+
+    public int getNum_last_photo() {
+        return num_last_photo;
+    }
+
+    public void setNum_last_photo(int num_last_photo) {
+        this.num_last_photo = num_last_photo;
     }
 }
