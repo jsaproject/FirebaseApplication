@@ -77,7 +77,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private final String nombre = usernameFromEmail(email);
     private ViewPager myViewPager;
     private TabLayout myTabLayout;
-    private TabsAcessorAdapter myTabsAcessorAdapter;
 
 
 
@@ -262,9 +261,15 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.action_logout:
                 logout();
                 return true;
-            case R.id.app_bar_search:
+            case R.id.app_contacts:
                 finish();
-                //startActivity(new Intent(ProfileActivity.this, SettingsActivity.class));
+                finish();
+                Intent intent2 = new Intent(ProfileActivity.this, ContactsActivity.class);
+                Bundle bundle2 = new Bundle();
+                bundle2.putSerializable("User", user);
+                intent2.putExtras(bundle2);
+                startActivity(intent2);
+                return true;
             case R.id.action_settings:
                 finish();
                 Intent intent = new Intent(ProfileActivity.this, SettingsActivity.class);
@@ -272,6 +277,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 bundle.putSerializable("User", user);
                 intent.putExtras(bundle);
                 startActivity(intent);
+                return true;
+            case R.id.app_profile:
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

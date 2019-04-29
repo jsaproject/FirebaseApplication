@@ -10,6 +10,7 @@ import com.google.firebase.firestore.IgnoreExtraProperties;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class User implements Serializable {
     private String username;
     private String status;
     private String uriphoto;
+    private ArrayList<String> contactos;
 
     public User(){
 
@@ -36,6 +38,7 @@ public class User implements Serializable {
         this.username = a.getUsername();
         this.status = a.getStatus();
         this.uriphoto= a.getUriphoto();
+        this.contactos = a.getContactos();
     }
 
 
@@ -48,6 +51,19 @@ public class User implements Serializable {
         this.username = username;
         this.status = status;
         this.uriphoto = uriphoto;
+        this.contactos = new ArrayList<>();
+    }
+
+   public ArrayList<String> getContactos() {
+        return contactos;
+    }
+
+    public void setContactos(ArrayList<String> contactos) {
+        this.contactos = contactos;
+    }
+
+    public void anadirContacto(String a){
+        contactos.add(a);
     }
 
     public String getUriphoto() {
