@@ -1,24 +1,24 @@
 package com.example.juan_.practicafirebase;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.example.juan_.practicafirebase.models.Group;
+import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.example.juan_.practicafirebase.models.Message;
-import com.example.juan_.practicafirebase.models.MessageList;
 import com.example.juan_.practicafirebase.models.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -27,7 +27,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -35,7 +36,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +44,7 @@ import javax.annotation.Nullable;
 public class ChatActivity extends AppCompatActivity implements  View.OnClickListener{
 
     private TextView nameGroup;
+    private RecyclerView rvMensajes;
     private User user;
     private FirebaseFirestore db;
     private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -52,6 +53,17 @@ public class ChatActivity extends AppCompatActivity implements  View.OnClickList
     private Button sendMessage;
     private EditText editText;
     private String fecha;
+    private FloatingActionButton addPhoto;
+    private Uri filePath;
+    private String sfoto;
+    private AdapterMensajes adapter;
+    int PICK_IMAGE_REQUEST=1;
+    ArrayList<String> mediaUriList = new ArrayList<>();
+    private ImageButton btnEnviarFoto;
+    private FirebaseStorage storage;
+    private StorageReference storageReference;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,13 +73,23 @@ public class ChatActivity extends AppCompatActivity implements  View.OnClickList
         setSupportActionBar(toolbar);
         db = FirebaseFirestore.getInstance();
 
+        storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReference();
+        rvMensajes = (RecyclerView) findViewById(R.id.rvMensajes);
+
+
+        LinearLayoutManager l = new LinearLayoutManager(this);
+        rvMensajes.setLayoutManager(l);
+
+
         nameGroup = (TextView) findViewById(R.id.nameGroup);
         listamessages = (ListView)findViewById(R.id.listMessage);
-        sendMessage = (Button) findViewById(R.id.sendbutton);
-        editText = (EditText) findViewById(R.id.editText);
-
+        sendMessage = (Button) findViewById(R.id.btnEnviar);
+        editText = (EditText) findViewById(R.id.txtMensaje);
+        btnEnviarFoto = (ImageButton) findViewById(R.id.btnEnviarFoto);
+        addPhoto = (FloatingActionButton) findViewById(R.id.addPhoto);
         nombre_grupo_string= getIntent().getStringExtra("Grupo");
-        nameGroup.setText(nombre_grupo_string);
+        //nameGroup.setText(nombre_grupo_string);
 
         Intent intent = this.getIntent();
         Bundle extras = intent.getExtras();
@@ -75,8 +97,23 @@ public class ChatActivity extends AppCompatActivity implements  View.OnClickList
 
         initializeMessages();
 
+        btnEnviarFoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                chooseImage();
+                mandarFoto();
+            }
+        });
 
         sendMessage.setOnClickListener(this);
+
+        /*addPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                chooseImage();
+                mandarFoto();
+            }
+        });*/
 
 
 
@@ -102,6 +139,7 @@ public class ChatActivity extends AppCompatActivity implements  View.OnClickList
                 }
 
                 int i = 0;
+                adapter = new AdapterMensajes(getApplicationContext());
                 while(i<size){
                     String s = Integer.toString(i);
                     HashMap<String,String> o= (HashMap<String,String>)lista_mensajes.get(s);
@@ -109,9 +147,11 @@ public class ChatActivity extends AppCompatActivity implements  View.OnClickList
                     String mensaje = o.get("mensaje");
                      String autor = o.get("autor");
                     String fecha = o.get("fecha");
+                    String foto = o.get("foto");
+                    String fotoautor = o.get("fotoPerfil");
                     //HashMap<String,String> nombre = (HashMap<String,String>) o.get("autor");
                     //String nombre1 = nombre.get("nombre");
-                    Message message = new Message(mensaje, autor, fecha, false);
+                    Message message = new Message(mensaje, autor, fecha, foto, fotoautor);
                     dataset.add(message);
                     datum.put("First Line",autor);
 
@@ -119,10 +159,11 @@ public class ChatActivity extends AppCompatActivity implements  View.OnClickList
                     datum.put("Third Line", "Fecha");
                     data.add(datum);
                     i++;
+                    adapter.addMensaje(message);
                 }
 
-                CustomAdapter customAdapter = new CustomAdapter(dataset, getApplicationContext());
-                listamessages.setAdapter(customAdapter);
+                rvMensajes.setAdapter(adapter);
+                //listamessages.setAdapter(adapterMensajes);
 /*                SimpleAdapter adapter = new SimpleAdapter(getApplicationContext(), data,
                         android.R.layout.simple_list_item_2,
                         new String[] {"First Line", "Second Line"},
@@ -143,6 +184,9 @@ public class ChatActivity extends AppCompatActivity implements  View.OnClickList
         if (view == sendMessage){
             mandarMensaje();
             editText.setText("");
+        }else if(view==addPhoto){
+            chooseImage();
+            mandarFoto();
         }
 
     }
@@ -159,7 +203,7 @@ public class ChatActivity extends AppCompatActivity implements  View.OnClickList
             Date today = Calendar.getInstance().getTime();
 
             String todayAsString = df.format(today);
-            final Message message = new Message(s, user.getNombre(), todayAsString, false);
+            final Message message = new Message(s, user.getNombre(), todayAsString, "2", user.getUriphoto());
             db.collection("Listagrupos").document(nombre_grupo_string).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -182,6 +226,70 @@ public class ChatActivity extends AppCompatActivity implements  View.OnClickList
         }
 
 
+    }
+
+    private void mandarFoto() {
+
+            String pattern = "MM/dd/yyyy HH:mm:ss";
+
+
+            DateFormat df = new SimpleDateFormat(pattern);
+
+
+            Date today = Calendar.getInstance().getTime();
+
+            String todayAsString = df.format(today);
+            final Message message = new Message(sfoto, user.getNombre(), todayAsString, "1", user.getUriphoto());
+            db.collection("Listagrupos").document(nombre_grupo_string).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    Map<String, Object> data = task.getResult().getData();
+
+                    HashMap<String, Object> hash_mensajes = (HashMap<String, Object>) data.get("listaMensajes");
+                    HashMap<String, Object> lista_mensajes = (HashMap<String, Object>) hash_mensajes.get("messageList");
+                    int size = 0;
+                    if(lista_mensajes!= null){
+                        size = lista_mensajes.size();
+                    }
+                    String s1 = Integer.toString(size);
+                    lista_mensajes.put(s1,message);
+
+
+
+                    db.collection("Listagrupos").document(nombre_grupo_string).update(data);
+                }
+            });
+
+
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @android.support.annotation.Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==RESULT_OK){
+            if(requestCode==PICK_IMAGE_REQUEST){
+                if(data.getClipData()==null){
+                    mediaUriList.add(data.getData().toString());
+                    filePath = data.getData();
+                    sfoto = data.getData().toString();
+                    mandarFoto();
+                }else{
+                    for(int i = 0; i<data.getClipData().getItemCount();i++){
+                        mediaUriList.add(data.getClipData().getItemAt(i).getUri().toString());
+                    }
+                }
+
+            }
+        }
+    }
+
+    private void chooseImage() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
+        intent.setAction(intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent,"Select picture"), PICK_IMAGE_REQUEST);
     }
 
 }

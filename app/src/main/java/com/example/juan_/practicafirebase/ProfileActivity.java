@@ -264,7 +264,14 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 return true;
             case R.id.app_bar_search:
                 finish();
-                startActivity(new Intent(ProfileActivity.this, UploadFile.class));
+                //startActivity(new Intent(ProfileActivity.this, SettingsActivity.class));
+            case R.id.action_settings:
+                finish();
+                Intent intent = new Intent(ProfileActivity.this, SettingsActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("User", user);
+                intent.putExtras(bundle);
+                startActivity(intent);
             default:
                 return super.onOptionsItemSelected(item);
         }

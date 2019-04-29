@@ -67,9 +67,6 @@ public class RegisterActivity extends AppCompatActivity implements  View.OnClick
 
         String email = editTextEmail.getText().toString().trim();
         String password  = editTextPassword.getText().toString().trim();
-        String nombre = editTextNombre.getText().toString().trim();
-        String apellidos = editTextApellidos.getText().toString().trim();
-        String telefono = editTextNumero.getText().toString().trim();
 
         //creating a new user
         firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -115,7 +112,7 @@ public class RegisterActivity extends AppCompatActivity implements  View.OnClick
         String apellidos = editTextApellidos.getText().toString().trim();
         String telefono = editTextNumero.getText().toString().trim();
 
-        user = new User(email, nombre, apellidos, telefono);
+        user = new User(email, nombre, apellidos, telefono, usernameFromEmail(email), "Hey, i am online", "");
 
         db.collection("users").document(user.getEmail()).set(user);
 
