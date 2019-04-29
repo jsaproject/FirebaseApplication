@@ -61,15 +61,18 @@ public class ContactsActivity extends AppCompatActivity implements View.OnClickL
     private ViewPager myViewPager;
     private TabLayout myTabLayout;
     private Set<String> contactos;
+    private TextView textViewContactos;
+    private TextView textViewContactos2;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.activity_contacts);
         Toolbar toolbar = findViewById(R.id.main_page_toolbar);
         setSupportActionBar(toolbar);
-
+        toolbar.setTitle("Contactos");
+        toolbar.setSubtitle("Contactos");
         Intent intent = this.getIntent();
         Bundle extras = intent.getExtras();
         user = (User) extras.getSerializable("User");
@@ -81,7 +84,11 @@ public class ContactsActivity extends AppCompatActivity implements View.OnClickL
         listAvailable = (ListView) findViewById(R.id.listviewavailable);
         db = FirebaseFirestore.getInstance();
         contactos = new HashSet<>();
+        textViewContactos = (TextView) findViewById(R.id.textViewContactos);
+        textViewContactos2 = (TextView) findViewById(R.id.textViewContactos2);
 
+        textViewContactos.setText("Contactos Incluidos");
+        textViewContactos2.setText("Contactos Disponibles");
 
         initialiceUser();
 
@@ -121,10 +128,10 @@ public class ContactsActivity extends AppCompatActivity implements View.OnClickL
 
 
     private void gruposUsuarioRegistrado() {
-        db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        db.collection("users").addSnapshotListener(new EventListener<QuerySnapshot>(){
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                Iterator<QueryDocumentSnapshot> iterator = task.getResult().iterator();
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                Iterator<QueryDocumentSnapshot> iterator = queryDocumentSnapshots.iterator();
                 Boolean encontrado = false;
                 QueryDocumentSnapshot next = null;
                 ArrayAdapter<String> arrayAdapter;

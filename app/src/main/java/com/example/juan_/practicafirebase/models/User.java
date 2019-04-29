@@ -25,6 +25,7 @@ public class User implements Serializable {
     private String status;
     private String uriphoto;
     private ArrayList<String> contactos;
+    private String fechaNacimiento;
 
     public User(){
 
@@ -39,7 +40,9 @@ public class User implements Serializable {
         this.status = a.getStatus();
         this.uriphoto= a.getUriphoto();
         this.contactos = a.getContactos();
+        this.fechaNacimiento =
     }
+
 
 
 
