@@ -6,16 +6,17 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ProfileActivity"
-    tools:showIn="@layout/activity_chat">
+    tools:showIn="@layout/activity_profile">
 
     <LinearLayout
-        android:layout_width="395dp"
-        android:layout_height="659dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_width="359dp"
+        android:layout_height="585dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
@@ -27,26 +28,36 @@
 
         <TextView
             android:id="@+id/textView2"
-            android:layout_width="414dp"
+            android:layout_width="333dp"
             android:layout_height="wrap_content"
-            android:text="Grupos registrados en tu usuario" />
+            android:text="Grupos registrados en tu usuario"
+            android:textAlignment="center" />
 
         <ListView
             android:id="@+id/ListaUsuarios"
-            android:layout_width="390dp"
-            android:layout_height="233dp"
-            android:layout_gravity="center_horizontal" />
+            android:layout_width="283dp"
+            android:layout_height="184dp"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_marginLeft="20dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:textAlignment="center" />
 
         <TextView
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textAlignment="center"
             android:text="Grupos Disponibles" />
 
         <ListView
             android:id="@+id/listviewavailable"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_marginLeft="70dp"
+            android:layout_marginRight="70dp"
+            android:gravity="center_vertical|center_horizontal"
+            android:textAlignment="center" />
 
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

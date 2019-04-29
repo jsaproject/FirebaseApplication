@@ -40,13 +40,18 @@ public class User implements Serializable {
         this.status = a.getStatus();
         this.uriphoto= a.getUriphoto();
         this.contactos = a.getContactos();
-        this.fechaNacimiento =
+        this.fechaNacimiento =a.getFechaNacimiento();
     }
 
+    public String getFechaNacimiento() {
+        return fechaNacimiento;
+    }
 
+    public void setFechaNacimiento(String fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
+    }
 
-
-    public User(String email, String nombre, String apellidos, String telefono, String username, String status, String uriphoto) {
+    public User(String email, String nombre, String apellidos, String telefono, String username, String status, String uriphoto, String fechaNacimiento) {
         this.email = email;
         this.nombre = nombre;
         this.apellidos = apellidos;
@@ -55,6 +60,7 @@ public class User implements Serializable {
         this.status = status;
         this.uriphoto = uriphoto;
         this.contactos = new ArrayList<>();
+        this.fechaNacimiento = fechaNacimiento;
     }
 
    public ArrayList<String> getContactos() {

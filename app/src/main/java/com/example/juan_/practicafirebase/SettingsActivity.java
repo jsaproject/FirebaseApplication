@@ -58,7 +58,7 @@ public class SettingsActivity extends AppCompatActivity{
         Bundle extras = intent.getExtras();
         user = (User) extras.getSerializable("User");
         InitializeFields();
-        userName.setText(user.getUsername());
+        userName.setText(user.getNombre());
         userStatus.setText(user.getStatus());
         if (!user.getUriphoto().isEmpty()){
             Glide.with(getApplicationContext() )
@@ -121,7 +121,7 @@ public class SettingsActivity extends AppCompatActivity{
 
     private void updateUser() {
         user.setStatus(userStatus.getText().toString());
-        user.setUsername(userName.getText().toString());
+        user.setNombre(userName.getText().toString());
 
         if (filePath!=null){
             final StorageReference riversRef = storageReference.child("images/"+ filePath.getLastPathSegment());
@@ -154,6 +154,8 @@ public class SettingsActivity extends AppCompatActivity{
             });
 
             //user.setUriphoto(riversRef.toString());
+        }else{
+            db.collection("users").document(user.getEmail()).set(user);
         }
 
 

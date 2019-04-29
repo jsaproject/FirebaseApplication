@@ -169,6 +169,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         (getApplicationContext(), android.R.layout.simple_list_item_1, nombregrupos);
                 arrayAdapter.notifyDataSetChanged();
                 ListaUsuarios.setAdapter(arrayAdapter);
+
                 ListaUsuarios.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -197,9 +198,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 while (iterator.hasNext()) {
                     QueryDocumentSnapshot next = iterator.next();
                     HashMap<String, Object> lista_usuarios = (HashMap<String, Object>) next.getData().get("usuarios");
+
+
                     HashMap<String, Object> usuariosimple = (HashMap<String, Object>) lista_usuarios.get("users");
                     boolean b = usuariosimple.containsKey(email);
-                    if (!usuariosimple.containsKey(email) && usuariosimple.size() < 7) {
+                    if (!usuariosimple.containsKey(email) && usuariosimple.size() < 6) {
                         nombregrupos.add(next.getId());
                     }
                 }
@@ -263,7 +266,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 return true;
             case R.id.app_contacts:
                 finish();
-                finish();
                 Intent intent2 = new Intent(ProfileActivity.this, ContactsActivity.class);
                 Bundle bundle2 = new Bundle();
                 bundle2.putSerializable("User", user);
@@ -271,7 +273,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 startActivity(intent2);
                 return true;
             case R.id.action_settings:
-                finish();
                 Intent intent = new Intent(ProfileActivity.this, SettingsActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("User", user);
@@ -279,6 +280,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 startActivity(intent);
                 return true;
             case R.id.app_profile:
+                return true;
+            case R.id.action_birthday:
+                Intent intent3 = new Intent(ProfileActivity.this, BirthdayActivity.class);
+                Bundle bundle3 = new Bundle();
+                bundle3.putSerializable("User", user);
+                intent3.putExtras(bundle3);
+                startActivity(intent3);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -353,6 +361,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 Map<String, Object> data = task.getResult().getData();
                 HashMap<String, Object> lista_usuarios = (HashMap<String, Object>) data.get("usuarios");
                 HashMap<String, Object> usuariosimple = (HashMap<String, Object>) lista_usuarios.get("users");
+
                 usuariosimple.put(email,user);
                 db.collection("Listagrupos").document(nombre_grupo).update(data);
                 //db.collection("Listagrupos").document(nombre_grupo).set(data);

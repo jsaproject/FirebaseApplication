@@ -24,6 +24,12 @@
         android:title="Grupos"
         app:actionViewClass="android.widget.SearchView" />
     <item
+        android:id="@+id/action_birthday"
+        android:orderInCategory="400"
+        android:title="Cumpleaños"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_logout"
         android:orderInCategory="400"
         android:title="Logout"

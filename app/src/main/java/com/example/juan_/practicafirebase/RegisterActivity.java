@@ -142,7 +142,7 @@ public class RegisterActivity extends AppCompatActivity implements  View.OnClick
         String apellidos = editTextApellidos.getText().toString().trim();
         String telefono = editTextNumero.getText().toString().trim();
 
-        user = new User(email, nombre, apellidos, telefono, usernameFromEmail(email), "Hey, i am online", "");
+        user = new User(email, nombre, apellidos, telefono, usernameFromEmail(email), "Hey, i am online", "",etFecha.getText().toString());
 
         db.collection("users").document(user.getEmail()).set(user);
 

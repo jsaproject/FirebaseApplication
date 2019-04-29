@@ -17,31 +17,37 @@
         <activity android:name=".UploadFile" />
         <activity
             android:name=".RegisterActivity"
-            android:label="@string/title_activity_register"
+            android:label="Registro"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ChatActivity"
-            android:label="@string/title_activity_chat"
+            android:label="Chat grupos"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ChatActivityContacts"
-            android:label="@string/title_activity_chat"
+            android:label="Chat contactos"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ProfileActivity"
-            android:label="@string/title_activity_profile"
+            android:label="Grupos"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".BirthdayActivity"
+            android:label="Cumpleaños"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".ContactsActivity"
+            android:label="Contactos"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".LoginActivity"
             android:label="@string/title_activity_login"
-            android:theme="@style/AppTheme.NoActionBar"/>
-            <activity
-                android:name=".LoginActivity"
-                android:label="@string/title_activity_login"
-                android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

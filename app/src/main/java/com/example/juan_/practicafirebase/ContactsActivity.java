@@ -71,8 +71,6 @@ public class ContactsActivity extends AppCompatActivity implements View.OnClickL
         setContentView(R.layout.activity_contacts);
         Toolbar toolbar = findViewById(R.id.main_page_toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setTitle("Contactos");
-        toolbar.setSubtitle("Contactos");
         Intent intent = this.getIntent();
         Bundle extras = intent.getExtras();
         user = (User) extras.getSerializable("User");
@@ -313,7 +311,6 @@ public class ContactsActivity extends AppCompatActivity implements View.OnClickL
             case R.id.app_contacts:
                 return true;
             case R.id.action_settings:
-                finish();
                 Intent intent = new Intent(ContactsActivity.this, SettingsActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("User", user);
@@ -327,6 +324,13 @@ public class ContactsActivity extends AppCompatActivity implements View.OnClickL
                 bundle2.putSerializable("User", user);
                 intent2.putExtras(bundle2);
                 startActivity(intent2);
+                return true;
+            case R.id.action_birthday:
+                Intent intent3 = new Intent(ContactsActivity.this, BirthdayActivity.class);
+                Bundle bundle3 = new Bundle();
+                bundle3.putSerializable("User", user);
+                intent3.putExtras(bundle3);
+                startActivity(intent3);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

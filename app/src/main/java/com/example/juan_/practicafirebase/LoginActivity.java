@@ -71,6 +71,7 @@ public class LoginActivity extends AppCompatActivity implements  View.OnClickLis
 
                     }
                     if (encontrado){
+                        finish();
                         user = next.toObject(User.class);
                         Intent intent = new Intent(LoginActivity.this, ProfileActivity.class);
                         Bundle bundle = new Bundle();
@@ -123,6 +124,7 @@ public class LoginActivity extends AppCompatActivity implements  View.OnClickLis
 
                             }
                             if (encontrado){
+                                finish();
                                 user = next.toObject(User.class);
                                 Intent intent = new Intent(LoginActivity.this, ProfileActivity.class);
                                 Bundle bundle = new Bundle();

@@ -6,16 +6,17 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ContactsActivity"
-    tools:showIn="@layout/activity_chat">
+    tools:showIn="@layout/activity_contacts">
 
     <LinearLayout
-        android:layout_width="395dp"
-        android:layout_height="659dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_width="359dp"
+        android:layout_height="585dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
@@ -29,24 +30,33 @@
             android:id="@+id/textViewContactos"
             android:layout_width="414dp"
             android:layout_height="wrap_content"
-            android:text="Contactos registrados en tu usuario" />
+            android:text="Contactos registrados en tu usuario"
+            android:textAlignment="center" />
 
         <ListView
             android:id="@+id/ListaUsuarios"
-            android:layout_width="390dp"
-            android:layout_height="233dp"
-            android:layout_gravity="center_horizontal" />
+            android:layout_width="241dp"
+            android:layout_height="209dp"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_marginLeft="70dp"
+            android:layout_marginRight="70dp"
+            android:gravity="center_vertical|center_horizontal" />
 
         <TextView
             android:id="@+id/textViewContactos2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Contactos Disponibles" />
+            android:text="Contactos Disponibles"
+            android:textAlignment="center" />
 
         <ListView
             android:id="@+id/listviewavailable"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_width="229dp"
+            android:layout_height="272dp"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_marginLeft="70dp"
+            android:layout_marginRight="70dp"
+            android:gravity="center_vertical|center_horizontal" />
 
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
